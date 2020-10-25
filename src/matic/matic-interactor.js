@@ -1,11 +1,8 @@
-let Contract = require('matic-contract');
 let MetamaskProvider = require('metamask-provider');
 let MaticConfig = require('matic-config');
 let EthConfig = require('ethereum-config');
 
 module.exports = {
-    Contract: Contract,
-    Utils: Utils,
     init: function(configName = 'testnet') {
         if (MaticConfig[configName] != undefined) {
             MaticConfig = MaticConfig[configName];
