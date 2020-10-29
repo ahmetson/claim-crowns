@@ -280,10 +280,11 @@
         "iOS",
         "HTML5"
       ],
-      "package_download_url": "https://download.cocos.com/CocosUdc/plugins/service-analytics/1.2.9_2.2.0.zip",
-      "package_version_desc": "<br />\n<strong>update：</strong> 2020/07/06<br />\n<strong>update note：</strong><br />\n1.Fix performance loss caused by network retry.<br />\n2.Update SDK version.</p>",
+      "package_download_url": "https://download.cocos.com/CocosUdc/plugins/service-analytics/1.3.5_2.2.1.zip",
+      "package_version_desc": "<br />\n<strong>update：</strong> 2020/10/27<br />\n<strong>update note：</strong><br />\n1.Add a UI component to choose a channel.<br />\n2.Add support for bytedance platform.<br />\n3.Add support for HUAWEI AppGallery Connect platform.<br />\n4.Update Analytics SDK to v2.2.1</p>",
       "service_component_name": "service-analytics",
       "package_versions": [
+        "1.3.5_2.2.1",
         "1.2.9_2.2.0",
         "1.2.8_2.1.3",
         "1.2.7_2.1.2",
