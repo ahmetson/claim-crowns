@@ -233,9 +233,9 @@ cc.Class({
 	    .call()
 	    .then(function(session) {
 		let amount = parseFloat(web3.utils.fromWei(session.amount));
-		let distributed = parseFloat(web3.utils.fromWei(session.distributed));
+		let claimed = parseFloat(web3.utils.fromWei(session.claimed));
 
-		if (distributed >= amount) {
+		if (claimed >= amount) {
 		    this.apyLabel.string = "0 %";
 		    return;
 		}
