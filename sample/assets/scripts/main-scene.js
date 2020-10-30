@@ -9,12 +9,7 @@ cc.Class({
         loadContractButton:cc.Button,
         approveButton:cc.Button,
 	depositButton:cc.Button,
-	progressLabel:cc.Label,
-	stakingAddress:"", //Address of Smartcontract (Miniapp) on blockchain
-	stakingAbi:"",      //Path to Abi in resources folder
-	lpTokenAddress:"",
-	crownsAddress:"",
-	lpTokenAbi:""
+	progressLabel:cc.Label
     },
 
 
@@ -46,9 +41,8 @@ cc.Class({
 	}.bind(this);
 
 	let expectedAccount = "";
-	let network = {id: 4, name: "rinkeby"};
-	// let network = {id: 1, name: "mainnet"};
-	cc.walletConnect.connectToMetaMask("", {id: 4, name: "rinkeby"}, onSuccess, onError);
+	let network = {id: cc.networkId, name: cc.networkName};
+	cc.walletConnect.connectToMetaMask(expectedAccount, network, onSuccess, onError);
     },
 
     onLoadContracts(state, address) {
@@ -59,12 +53,12 @@ cc.Class({
 
 	// LP Mining (aka Staking game smartcontract
 	cc.ethereumContract
-	    .loadContract(this.stakingAddress, this.stakingAbi, this.walletAddress)
+	    .loadContract(cc.stakingAddress, cc.stakingAbi, this.walletAddress)
 	    .then(function(contract){
 		cc.stakingContract = contract;
 
 		// LP Token that would be deposited by player
-		cc.ethereumContract.loadContract(this.lpTokenAddress, this.lpTokenAbi, this.walletAddress)
+		cc.ethereumContract.loadContract(cc.lpTokenAddress, cc.erc20Abi, this.walletAddress)
 		    .then(function(token){
 			this.progressLabel.string = "Game is ready!";
 			cc.lpToken = token;

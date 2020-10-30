@@ -98,6 +98,9 @@
       },
       {
         "__id__": 63
+      },
+      {
+        "__id__": 64
       }
     ],
     "_prefab": null,
@@ -2855,11 +2858,23 @@
     "progressLabel": {
       "__id__": 60
     },
-    "stakingAddress": "0x186e521514542af46f404ec356d556b26229dfb6",
-    "stakingAbi": "Staking",
-    "lpTokenAddress": "0x412898253e0ddc1af9d81740615bfefef7b3bdad",
-    "crownsAddress": "0x8c9f6a021039ccbe98451918db6EE629368aD600 ",
-    "lpTokenAbi": "ERC20",
     "_id": "90kIN45zZKkrSKOVtr32yI"
+  },
+  {
+    "__type__": "8b39edmazlHiI4m2TLXmVmj",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "networkId": 1604057551129,
+    "networkName": "development",
+    "stakingAddress": "0xa4E84979c95cD4f12C53E73d63E0A8634A1f44Ae",
+    "stakingAbi": "Staking",
+    "lpTokenAddress": "0x50aF0922d65D04D87d810048Dc640E2474eBfbd9",
+    "crownsAddress": "0x055cBfeD6df4AFE2452b18fd3D2592D1795592b4",
+    "erc20Abi": "ERC20",
+    "_id": "ebdHPioiRILb4+66JZmg4O"
   }
 ]
