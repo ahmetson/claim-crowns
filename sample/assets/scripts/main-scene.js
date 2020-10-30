@@ -263,7 +263,7 @@ cc.Class({
 
 		// Reward per second:
 		let rewardUnit = parseFloat(web3.utils.fromWei(session.totalReward))/period;
-		let interest = rewardUnit*(100/this.shares);
+		let interest = rewardUnit*(this.shares*0.01);
 
 		// APY= (1 + interest/n )n – 1
 		// where n is number of coumpounding in ayear
