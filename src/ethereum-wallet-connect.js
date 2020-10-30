@@ -161,7 +161,7 @@ cc.Class({
     },
 
     expectNetwork () {
-        let currentNetworkID = parseInt(ethereum.chainId);
+        let currentNetworkID = parseInt(ethereum.networkVersion);
         this.setValidNetwork(currentNetworkID);
 
         ethereum.on('chainChanged', this.setValidNetwork.bind(this));
