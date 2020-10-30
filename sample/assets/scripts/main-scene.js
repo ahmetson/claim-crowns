@@ -9,6 +9,8 @@ cc.Class({
         loadContractButton:cc.Button,
         approveButton:cc.Button,
 	depositButton:cc.Button,
+	claimButton:cc.Button,
+	withdrawButton:cc.Button,
 	progressLabel:cc.Label,
 	depositAmount:'5',                 // this number should be in String format
 	depositLabel:cc.Label,
@@ -27,6 +29,8 @@ cc.Class({
         this.approveButton.node.on('click',this.onApprove,this);
 	this.depositButton.node.on('click',this.onDeposit,this);
 	this.updateInfoButton.node.on('click',this.onUpdateInfo,this);
+	this.claimButton.node.on('click',this.onClaim,this);
+	this.withdrawButton.node.on('click',this.onWithdraw,this);
 
 	this.progressLabel.string = "";
 
@@ -81,14 +85,42 @@ cc.Class({
 		this.progressLabel.string = err.toString();
 		cc.error(err);
 	    }.bind(this));
+    },
 
-	// To retrieve data from blockchain
-		    // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html#id23
-		    //cc.stakingContract.methods.owner().call()...
-		    
-	// To change contract state
-		    // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html#id23
-		    //cc.stakingContract.methods.startSession(stakingToken, totalReward, period, startTime, generation).send()...;
+    onClaim(event) {
+        this.progressLabel.string = "Claim "+this.claimable+" CWS...";
+
+	cc.stakingContract.methods.claim(cc.lpTokenAddress)
+	    .send()
+	    .on('transactionHash', function(hash){
+		this.progressLabel.string = "Please wait tx confirmation...";
+	    }.bind(this))
+	    .on('receipt', function(receipt){
+		this.progressLabel.string = "Claimed. Update the stats!";
+	    }.bind(this))
+	    .on('error', function(err){
+		this.progressLabel.string = err.toString();
+		cc.error(err);
+	    }.bind(this));
+    },
+
+    onWithdraw(event) {
+        this.progressLabel.string = "Withdraw "+this.depositAmount+" LP tokens...";
+
+	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
+
+	cc.stakingContract.methods.withdraw(cc.lpTokenAddress, depositAmount)
+	    .send()
+	    .on('transactionHash', function(hash){
+		this.progressLabel.string = "Please wait tx confirmation...";
+	    }.bind(this))
+	    .on('receipt', function(receipt){
+		this.progressLabel.string = "Withdrawn. Update the stats!";
+	    }.bind(this))
+	    .on('error', function(err){
+		this.progressLabel.string = err.toString();
+		cc.error(err);
+	    }.bind(this));
     },
 
     onApprove(event) {
