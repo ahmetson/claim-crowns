@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.736150120499898,
-      "y": 0.736150120499898,
+      "x": 0.5278031643091561,
+      "y": 0.5278031643091561,
       "z": 1
     },
     "_quat": {
@@ -101,6 +101,9 @@
       },
       {
         "__id__": 122
+      },
+      {
+        "__id__": 123
       }
     ],
     "_prefab": null,
@@ -5523,14 +5526,31 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": true,
+    "_enabled": false,
     "networkId": 1604057551129,
     "networkName": "development",
-    "stakingAddress": "0xa4E84979c95cD4f12C53E73d63E0A8634A1f44Ae",
+    "stakingAddress": "0x99843a32F30E216f4a68C494D6dA4E6826434490",
     "stakingAbi": "Staking",
-    "lpTokenAddress": "0x50aF0922d65D04D87d810048Dc640E2474eBfbd9",
-    "crownsAddress": "0x055cBfeD6df4AFE2452b18fd3D2592D1795592b4",
+    "lpTokenAddress": "0xa4cBDae70871E8664b8de077765DDA2f4cc90d02",
+    "crownsAddress": "0x8c4Ca9343734227366653495cC068aB03B4f5bee",
     "erc20Abi": "ERC20",
     "_id": "ebdHPioiRILb4+66JZmg4O"
+  },
+  {
+    "__type__": "c33e7HmMbZAcquqw52Ns7EN",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "networkId": 4,
+    "networkName": "rinkeby",
+    "stakingAddress": "0xB69aA417a1283618AACc0EAE123a1e01dE84f4AA",
+    "stakingAbi": "Staking",
+    "lpTokenAddress": "0x412898253e0ddc1af9d81740615bfefef7b3bdad",
+    "crownsAddress": "0x8c9f6a021039ccbe98451918db6ee629368ad600",
+    "erc20Abi": "ERC20",
+    "_id": "adUfJ2OptFCJws9l9wWuba"
   }
 ]
