@@ -216,7 +216,7 @@ cc.Class({
 		this.contractBalanceLabel.string = this.totalDeposited.toFixed(4) + " LP Token";
 
 		// Portion of deposited that player shares
-		this.shares = (100/(this.deposited/this.totalDeposited));
+		this.shares = (100*(this.deposited/this.totalDeposited));
 		this.sharesLabel.string = this.shares.toFixed(4) + " %";
 
 		// APY: it depends on shares and claimed token amount
