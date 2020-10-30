@@ -9,7 +9,8 @@ cc.Class({
         loadContractButton:cc.Button,
         approveButton:cc.Button,
 	depositButton:cc.Button,
-	progressLabel:cc.Label
+	progressLabel:cc.Label,
+	depositAmount:'5',                 // this number should be in String format
     },
 
 
@@ -83,10 +84,39 @@ cc.Class({
     },
 
     onApprove(event) {
-        this.progressLabel.string = "Approve was not implemented yet. Yell at Medet";
+        this.progressLabel.string = "Approve "+this.depositAmount+" LP Tokens...";
+
+	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
+
+	cc.lpToken.methods.approve(cc.stakingAddress, depositAmount)
+	    .send()
+	    .on('transactionHash', function(hash){
+		this.progressLabel.string = "Please wait tx confirmation...";
+	    }.bind(this))
+	    .on('receipt', function(receipt){
+		this.progressLabel.string = "Approved. You can deposit now!";
+	    }.bind(this))
+	    .on('error', function(err){
+		this.progressLabel.string = err.toString();
+		cc.error(err);
+	    }.bind(this));
     },
 
     onDeposit(event) {
-	this.progressLabel.string = "Deposit was not implemented yet. Yell at Medet";
+	this.progressLabel.string = "Deposit "+this.depositAmount+" LP Tokens...";
+	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
+	
+	cc.stakingContract.methods.deposit(cc.lpTokenAddress, depositAmount)
+	    .send({from: this.walletAddress})
+	    .on('transactionHash', function(hash){
+		this.progressLabel.string = "Please wait tx confirmation...";
+	    }.bind(this))
+	    .on('receipt', function(receipt){
+		this.progressLabel.string = "Deposit succeed, check your balance in the wallet!";
+	    }.bind(this))
+	    .on('error', function(err){
+		this.progressLabel.string = err.toString();
+		cc.error(err);
+	    }.bind(this));
     }
 });
