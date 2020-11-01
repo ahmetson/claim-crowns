@@ -261,15 +261,20 @@ cc.Class({
 		// APY Calculation
 		//--------------------
 
+		let cwsSupply = parseFloat(web3.utils.fromWei(session.totalReward));
+		let cwsPrice = 1; // in WETH.
+		
 		// Reward per second:
-		let rewardUnit = parseFloat(web3.utils.fromWei(session.totalReward))/period;
-		let interest = rewardUnit*(this.shares*0.01);
+		let rewardUnit = cwsSupply/period;
+		// interest per second.
+		let interest = rewardUnit*(this.shares*0.01); // shares in %
 
-		// APY= (1 + interest/n )n – 1
-		// where n is number of coumpounding in ayear
-		//let n = 31556952; // 1 year in seconds
-                //let apy = (1 + (interest/n));
-		cc.log("Reward Unit = "+rewardUnit.toFixed(4)+", interest/second = "+interest.toFixed(4));
+		// units per year, units are seconds
+		let annualUnits = 31556952;
+		let annualInterest = interest * annualUnits * cwsPrice;
+		let apy = (annualInterest/cwsSupply)*100;
+
+		this.apyLabel.string = apy + " %";
 	    }.bind(this))
 	    .catch(function(err){
 		console.error(err);
