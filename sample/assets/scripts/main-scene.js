@@ -267,12 +267,12 @@ cc.Class({
 		// Reward per second:
 		let rewardUnit = cwsSupply/period;
 		// interest per second.
-		let interest = rewardUnit*(this.shares*0.01); // shares in %
+		// let interest = rewardUnit*(this.shares*0.01); // shares in %
 
 		// units per year, units are seconds
 		let annualUnits = 31556952;
-		let annualInterest = interest * annualUnits * cwsPrice;
-		let apy = (annualInterest/cwsSupply)*100;
+		let annualReward = rewardUnit * annualUnits * cwsPrice;
+		let apy = (annualReward/cwsSupply)*100;
 
 		this.apyLabel.string = apy + " %";
 	    }.bind(this))
