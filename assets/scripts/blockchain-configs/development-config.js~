@@ -1,0 +1,19 @@
+
+
+cc.Class({
+    extends: cc.Component,
+
+    properties: {
+	networkId: 4,
+	networkName: "rinkeby",
+	stakingAddress:"staking address", //Address of Smartcontract (Miniapp) on blockchain
+	stakingAbi:"staking abi",      //Path to Abi in resources folder
+	lpTokenAddress:"lp token address",
+	crownsAddress:"crowns addrss",
+	erc20Abi:"erc20 abi"
+    },
+
+    start () {
+	cc.log("Network ID: "+this.networkId);
+    },
+});

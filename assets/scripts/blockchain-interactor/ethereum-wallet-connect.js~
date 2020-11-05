@@ -1,0 +1,175 @@
+const EventType         = require("EventType");
+const BlockchainEvent   = require('blockchain-event');
+
+cc.Class({
+    extends: cc.Component,
+
+    // Original code was written on
+    // https://github.com/ethereum/EIPs/issues/55#issuecomment-185938403
+    isAddress (address) {
+        if (address == undefined || address.length == 0) {
+            return false;
+        }
+
+        address = address.toLowerCase();
+
+        // delete "0x" prefix
+        if (address.startsWith("0x")) {
+            address = address.substr(2);
+        }
+
+        if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+            // check if it has the basic requirements of an address
+            return false;
+        } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
+            // If it's all small caps or all all caps, return "true
+            return true;
+        } else {
+            // Otherwise check each case
+            return isChecksumAddress(address);
+        }
+    },
+
+    isChecksumAddress (address) {
+        address = address.replace('0x','');
+
+        var addressHash = web3.sha3(address.toLowerCase());
+        for (var i = 0; i < 40; i++ ) {
+            // the nth letter should be uppercase if the nth digit of casemap is 1
+            if ((parseInt(addressHash[i], 16) > 7 && address[i].toUpperCase() !== address[i]) || (parseInt(addressHash[i], 16) <= 7 && address[i].toLowerCase() !== address[i])) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+
+    onLogout () {
+        cc.zz.fire.un(EventType.LOG_OUT, this.onLogout.bind(this));
+    },
+
+    /**
+     * Connects the game in browser to the wallet.
+     *
+     * At current moment only MetaMask is supported.
+     * 
+     * @param  {Function}   callback        function that will be evoked after wallet connection
+     * @param {String}      address         expected address that metamask should be connected to
+     * @param {Object}      network         metamask network that should be connected to, contains name and network ID
+     * @return {String}                     the address that connected in the wallet
+     */
+    connectToMetaMask(callback, expectedAddress, expectedNetwork) {
+        /////////////////////////////////////
+        // Format the address and network. //
+        /////////////////////////////////////
+        if (expectedAddress.length > 0 && !expectedAddress.startsWith("0x")) {
+            expectedAddress = "0x"+expectedAddress;
+        }
+        else if (!this.isAddress(expectedAddress)) {
+            expectedAddress = undefined;
+        }
+
+        /////////////////////
+        // Detect Metamask //
+        /////////////////////
+        if (typeof window.ethereum === 'undefined') {
+            cc.zz.fire.fire(EventType.POP_UP, cc.zz.Popup.TYPE.METAMASK_NOT_FOUND.id, {});
+            return;
+        } else {
+            cc.zz.fire.fire(EventType.POP_UP, cc.zz.Popup.TYPE.LOADING_WALLET_CONFIRMATION.id, {});
+
+            window.web3 = new Web3(ethereum);
+            ethereum.autoRefreshOnNetworkChange = false;
+        }
+
+        this.callback = callback;
+        cc.zz.fire.on(EventType.LOG_OUT, this.onLogout.bind(this));
+
+        // update the flag of the valid network
+        this.expectedNetwork = expectedNetwork;
+        this.expectNetwork();
+
+        // update the flag of the valid address
+        this.expectedAddress = expectedAddress;
+        this.expectAddress();
+    },
+
+    setAsUnlocked () {
+        if (this.validAddress && this.validNetworkID && this.callback) {
+            cc.zz.fire.fire(EventType.POP_DOWN);
+
+            if (this.callback) {
+                this.callback(this.currentAddress);
+
+                this.callback = undefined;
+            }
+        }
+    },
+
+    expectAddress () {
+        ethereum
+          .request({ method: 'eth_accounts' })
+          .then(function(currentAccounts) {
+            if (currentAccounts.length === 0) {
+                ethereum.request({ method: 'eth_requestAccounts' })
+                .then(function(addresses) {
+                    if (addresses.length === 0) {
+                        cc.zz.fire.fire(EventType.POP_UP, cc.zz.Popup.TYPE.WALLET_AUTH_REJECTED.id, { normal_paragraph: 'Account is not unlocked. Please unlock account' });
+                    } else {
+                        this.setValidAddress(addresses[0]);
+                    }
+                }.bind(this))
+                .catch(function(error) {
+                    cc.zz.fire.fire(EventType.POP_UP, cc.zz.Popup.TYPE.WALLET_AUTH_REJECTED.id, { normal_paragraph: 'Connection to Metamask was rejected by User' });
+                    cc.error(error);
+                });
+            }
+            else {
+                this.setValidAddress(currentAccounts[0]);
+            }
+        }.bind(this))
+        .catch(cc.error);
+        
+        ethereum.on('accountsChanged', function (accounts) {
+            this.setValidAddress(accounts[0]);
+        }.bind(this));
+    },
+
+     setValidAddress(address) {
+        if (this.expectedAddress != undefined && this.expectedAddress != address.toLowerCase()) {
+            this.validAddress = false;
+
+            cc.zz.fire.fire(EventType.POP_UP, cc.zz.Popup.TYPE.EXPECTING_VALID_CONNECTION.id, { 
+                title: 'Metamask should be connect to the certain account!',
+                normal_paragraph: `Game should be connected to ${this.expectedAddress} \n` +
+                                `Selected account on MetaMask is ${address}.`
+            });
+        } else {
+            this.currentAddress = address.toLowerCase();
+            this.validAddress = true;
+            this.setAsUnlocked();
+        }
+    },
+
+    expectNetwork () {
+        let currentNetworkID = parseInt(ethereum.chainId);
+        this.setValidNetwork(currentNetworkID);
+
+        ethereum.on('chainChanged', this.setValidNetwork.bind(this));
+    },
+
+    setValidNetwork(networkID) {
+        if (this.expectedNetwork.id == networkID) {
+            this.validNetworkID = true;
+            this.setAsUnlocked();
+        }
+        else {
+            this.validNetworkID = false;
+
+            cc.zz.fire.fire(EventType.POP_UP, cc.zz.Popup.TYPE.EXPECTING_VALID_CONNECTION.id, { 
+                title: 'MetaMask connected to another network!',
+                normal_paragraph: `Waiting for connection to ${this.expectedNetwork.name}...`
+            });
+        }
+    },
+});
