@@ -9,7 +9,9 @@ cc.Class({
         loadContractButton:cc.Button,
 	depositButton:cc.Button,
 	claimButton:cc.Button,
+	claimNftButton:cc.Button,
 	withdrawButton:cc.Button,
+	updateInfoButton:cc.Button,
 	progressLabel:cc.Label,
 	depositAmount:'5',                 // this number should be in String format
 	depositLabel:cc.Label,
@@ -17,8 +19,7 @@ cc.Class({
 	claimableLabel:cc.Label,
 	contractBalanceLabel:cc.Label,
 	sharesLabel:cc.Label,
-	apyLabel:cc.Label,
-	updateInfoButton:cc.Button,
+	apyLabel:cc.Label
     },
 
 
@@ -28,6 +29,7 @@ cc.Class({
 	this.depositButton.node.on('click',this.onDeposit,this);
 	this.updateInfoButton.node.on('click',this.onUpdateInfo,this);
 	this.claimButton.node.on('click',this.onClaim,this);
+	this.claimNftButton.node.on('click',this.onClaimNft,this);
 	this.withdrawButton.node.on('click',this.onWithdraw,this);
 
 	this.progressLabel.string = "";
@@ -71,10 +73,21 @@ cc.Class({
 		// LP Token that would be deposited by player
 		cc.ethereumContract.loadContract(cc.lpTokenAddress, cc.erc20Abi, this.walletAddress)
 		    .then(function(token){
-			this.progressLabel.string = "Game is ready!";
+
 			cc.lpToken = token;
 
-			this.setSessionId();
+			cc.ethereumContract.loadContract(cc.nftAddress, cc.nftAbi, this.walletAddress)
+			    .then(function(nft){
+				cc.nft = nft;
+
+				cc.ethereumContract.loadContract(cc.factoryAddress, cc.factoryAbi, this.walletAddress)
+				    .then(function(factory){
+					cc.factory = factory;
+					this.progressLabel.string = "Game is ready!";
+				
+					this.setSessionId();
+				    }.bind(this))
+			    }.bind(this))
 		    }.bind(this))
 		    .catch(function(errToken){
 			this.progressLabel.string = errToken.toString();
@@ -197,6 +210,23 @@ cc.Class({
 		this.progressLabel.string = err.toString();
 		cc.error(err);
 	    }.bind(this));
+    },
+
+    onClaimNft(event) {
+	this.progressLabel.string = "Claim NFT...";
+
+	cc.stakingContract.methods.claimNFT(cc.sessionId)
+	    .send()
+	    .on('transactionHash', function(hash){
+		this.progressLabel.string = "Please wait tx confirmation...";
+	    }.bind(this))
+	    .on('receipt', function(receipt){
+		this.progressLabel.string = "NFT Claimed!";
+	    }.bind(this))
+	    .on('error', function(err){
+		this.progressLabel.string = err.toString();
+		cc.error(err);
+	    }.bind(this));	
     },
 
     onWithdraw(event) {

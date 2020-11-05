@@ -10,7 +10,11 @@ cc.Class({
 	stakingAbi:"Staking",      //Path to Abi in resources folder
 	lpTokenAddress:"lp token address",
 	crownsAddress:"crowns addrss",
-	erc20Abi:"ERC20"
+	erc20Abi:"ERC20",
+	nftAddress:"seascape nft",
+	nftAbi:"SeascapeNFT",
+	factoryAddress:"nfs Factory",
+	factoryAbi:"NFTFactory"
     },
 
     start () {
@@ -21,5 +25,9 @@ cc.Class({
 	cc.lpTokenAddress = this.lpTokenAddress;
 	cc.crownsAddress = this.crownsAddress;
 	cc.erc20Abi = this.erc20Abi;
+	cc.nftAddress = this.nftAddress;
+	cc.nftAbi = this.nftAbi;
+	cc.factoryAddress = this.factoryAddress;
+	cc.factoryAbi = this.factoryAbi;
     },
 });
