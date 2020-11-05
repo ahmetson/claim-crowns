@@ -7,7 +7,6 @@ cc.Class({
     properties: {
         unlockButton:cc.Button,
         loadContractButton:cc.Button,
-        approveButton:cc.Button,
 	depositButton:cc.Button,
 	claimButton:cc.Button,
 	withdrawButton:cc.Button,
@@ -26,7 +25,6 @@ cc.Class({
     onLoad () {
         this.unlockButton.node.on('click',this.onUnlockWallet,this);
         this.loadContractButton.node.on('click',this.onLoadContracts,this);
-        this.approveButton.node.on('click',this.onApprove,this);
 	this.depositButton.node.on('click',this.onDeposit,this);
 	this.updateInfoButton.node.on('click',this.onUpdateInfo,this);
 	this.claimButton.node.on('click',this.onClaim,this);
@@ -206,18 +204,17 @@ cc.Class({
 	    }.bind(this));
     },
 
-    onApprove(event) {
+    approve(allowance, depositAmount) {
         this.progressLabel.string = "Approve "+this.depositAmount+" LP Tokens...";
 
-	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
-
-	cc.lpToken.methods.approve(cc.stakingAddress, depositAmount)
+	cc.lpToken.methods.approve(cc.stakingAddress, allowance)
 	    .send()
 	    .on('transactionHash', function(hash){
 		this.progressLabel.string = "Please wait tx confirmation...";
 	    }.bind(this))
 	    .on('receipt', function(receipt){
-		this.progressLabel.string = "Approved. You can deposit now!";
+		this.progressLabel.string = "Approved!";
+		this.deposit(depositAmount);
 	    }.bind(this))
 	    .on('error', function(err){
 		this.progressLabel.string = err.toString();
@@ -225,9 +222,35 @@ cc.Class({
 	    }.bind(this));
     },
 
+    // Deposit tokens to smartcontract
+    // The deposit is called within smartcontract.
+    // However deposit needs to get an approvement from token holder.
+    //
+    // We do an approvement only once.
     onDeposit(event) {
-	this.progressLabel.string = "Deposit "+this.depositAmount+" LP Tokens...";
+	this.progressLabel.string = "Checking allowance for "+this.depositAmount+" LP Tokens...";
 	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
+
+	let maxToken     = 1000000; // 1 million
+	let maxAllowance = this.depositAmount > maxToken
+	    ? depositAmount
+	    : web3.utils.toWei(maxToken.toString(), 'ether');
+
+	let owner = this.walletAddress;    // Current wallet account
+	let sender = cc.stakingAddress;    // allows to spend token to staking contract
+
+	cc.lpToken.methods.allowance(owner, sender).call().then(function(allowance){
+	    allowance = parseInt(allowance);
+	    if (allowance < depositAmount) {
+		this.approve(maxAllowance, /*then deposit:*/ depositAmount);
+	    } else {
+		this.deposit(depositAmount);
+	    }
+	}.bind(this));
+    },
+
+    deposit(depositAmount) {
+	this.progressLabel.string = "Deposit "+this.depositAmount+" LP Tokens...";
 	
 	cc.stakingContract.methods.deposit(cc.sessionId, depositAmount)
 	    .send({from: this.walletAddress})
