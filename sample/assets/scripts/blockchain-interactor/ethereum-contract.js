@@ -8,7 +8,7 @@ let contract = {
             }
             cc.loader.loadRes(abiPath, function (err, data) {
                 if (err) {
-                    reject('Failed to load Matic RootChain Contract ABI')
+                    reject(err.toString());
                 }
                 else {
                     var contractWeb3 = new web3.eth.Contract(
