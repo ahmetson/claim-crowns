@@ -75,6 +75,8 @@ cc.Class({
 		    .then(function(token){
 			this.progressLabel.string = "Game is ready!";
 			cc.lpToken = token;
+
+			this.setSessionId();
 		    }.bind(this))
 		    .catch(function(errToken){
 			this.progressLabel.string = errToken.toString();
@@ -87,10 +89,91 @@ cc.Class({
 	    }.bind(this));
     },
 
+    isStartedFor(session) {
+	let totalReward = parseFloat(web3.utils.fromWei(session.totalReward));
+
+	if (totalReward == 0) {
+	    return false;
+	}
+
+	let now = Math.floor(Date.now()/1000);
+
+	let startTime = parseInt(session.startTime);
+	let period = parseInt(session.period);
+
+	return now < (startTime + period);
+    },
+
+    calculateInterest(session, balance) {
+	let balanceAmount = parseInt(balance.amount);
+	let sessionAmount = parseInt(session.amount);
+
+	if (balanceAmount == 0 || sessionAmount == 0) {
+	    return 0;
+	}
+	
+	let rewardUnit    = parseInt(session.rewardUnit);
+	let portion = balanceAmount / sessionAmount;
+	let interest = rewardUnit * portion;
+
+	let claimedTime   = parseInt(balance.claimedTime);
+	let sessionCap    = Math.floor(Date.now()/1000);
+	if (this.isStartedFor(session) == false) {
+	    sessionCap    = parseInt(session.startTime) + parseInt(session.period);
+	}
+	let earnPeriod    = sessionCap - claimedTime;
+	return parseFloat(web3.utils.fromWei((interest * earnPeriod).toString()));
+    },
+
+    setSessionId() {
+	cc.stakingContract.methods.lastSessionIds(cc.lpToken._address).call().then(function(sessionId){
+	    if (sessionId == undefined) {
+		cc.error("No session was found");
+	    } else {
+		cc.sessionId = parseInt(sessionId);
+
+		this.updateInfo(sessionId);
+	    }
+	}.bind(this));
+    },
+
+    updateInfo(sessionId) {
+	cc.stakingContract.methods.sessions(sessionId).call().then(function(session){
+	    cc.session = session;
+	    cc.stakingContract.methods.balances(sessionId, this.walletAddress).call().then(function(balance){
+		cc.balance = balance;
+		
+		this.deposited = parseFloat(web3.utils.fromWei(balance.amount));
+		this.depositLabel.string = this.deposited.toFixed(4) + " LP Token";
+
+		this.claimable = this.calculateInterest(session, balance);
+		this.claimableLabel.string = this.claimable.toFixed(4) + " LP Token";
+			    
+		this.earned = this.claimable + parseFloat(web3.utils.fromWei(balance.claimed));
+		this.earnedLabel.string = this.earned.toFixed(4) + " LP Token";
+
+		this.totalDeposited = parseFloat(web3.utils.fromWei(session.amount));
+		this.contractBalanceLabel.string = this.totalDeposited.toFixed(4) + " LP Token";
+
+		// Portion of deposited that player shares
+		if (this.totalDeposited == 0) {
+		    this.shares = 0;
+		    this.sharesLabel.string = "0 %";
+		} else {
+		    this.shares = (100*(this.deposited/this.totalDeposited));
+		    this.sharesLabel.string = this.shares.toFixed(4) + " %";
+		}
+
+		// APY: it depends on shares and claimed token amount
+		this.setApy(session, balance);
+	    }.bind(this))
+	}.bind(this))
+    },
+
     onClaim(event) {
         this.progressLabel.string = "Claim "+this.claimable+" CWS...";
 
-	cc.stakingContract.methods.claim(cc.lpTokenAddress)
+	cc.stakingContract.methods.claim(cc.sessionId)
 	    .send()
 	    .on('transactionHash', function(hash){
 		this.progressLabel.string = "Please wait tx confirmation...";
@@ -109,7 +192,7 @@ cc.Class({
 
 	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
 
-	cc.stakingContract.methods.withdraw(cc.lpTokenAddress, depositAmount)
+	cc.stakingContract.methods.withdraw(cc.sessionId, depositAmount)
 	    .send()
 	    .on('transactionHash', function(hash){
 		this.progressLabel.string = "Please wait tx confirmation...";
@@ -146,7 +229,7 @@ cc.Class({
 	this.progressLabel.string = "Deposit "+this.depositAmount+" LP Tokens...";
 	let depositAmount = web3.utils.toWei(this.depositAmount.toString(), 'ether');
 	
-	cc.stakingContract.methods.deposit(cc.lpTokenAddress, depositAmount)
+	cc.stakingContract.methods.deposit(cc.sessionId, depositAmount)
 	    .send({from: this.walletAddress})
 	    .on('transactionHash', function(hash){
 		this.progressLabel.string = "Please wait tx confirmation...";
@@ -161,123 +244,50 @@ cc.Class({
     },
 
     onUpdateInfo(event) {
-	if (this.walletAddress == undefined) {
-	    this.progressLabel.string = "Please unlock wallet first";
-	    return;
-	}
-	if (cc.stakingContract == undefined) {
-	    this.progressLabel.string = "Please load contracts first";
-	    return;
-	}
-
-
-	// Deposit amount made by player
-	cc.stakingContract.methods.stakedBalanceOf(
-	    cc.lpTokenAddress, this.walletAddress)
-	    .call()
-	    .then(function(balance){
-		this.deposited = parseFloat(web3.utils.fromWei(balance));
-		this.depositLabel.string = this.deposited.toFixed(4) + " LP Token";
-	    }.bind(this))
-	    .catch(function(err){
-		cc.error(err);
-	    }.bind(this));
-
-	// Claimed amount of tokens by player
-	cc.stakingContract.methods.earned(
-	    cc.lpTokenAddress, this.walletAddress)
-	    .call()
-	    .then(function(balance){
-		this.earned = parseFloat(web3.utils.fromWei(balance));
-		this.earnedLabel.string = this.earned.toFixed(4) + " LP Token";
-	    }.bind(this))
-	    .catch(function(err){
-		cc.error(err);
-	    }.bind(this));
-
-	// Amount that player could claim
-	cc.stakingContract.methods.claimable(
-	    cc.lpTokenAddress, this.walletAddress)
-	    .call()
-	    .then(function(balance){
-		this.claimable = parseFloat(web3.utils.fromWei(balance));
-		this.claimableLabel.string = this.claimable.toFixed(4) + " LP Token";
-	    }.bind(this))
-	    .catch(function(err){
-		cc.error(err);
-	    }.bind(this));
-
-	// 1. All player's deposit sum,
-	// 2. Shares that player has (in %)
-	cc.stakingContract.methods.stakedBalance(cc.lpTokenAddress)
-	    .call()
-	    .then(function(balance){
-		this.totalDeposited = parseFloat(web3.utils.fromWei(balance));
-		this.contractBalanceLabel.string = this.totalDeposited.toFixed(4) + " LP Token";
-
-		// Portion of deposited that player shares
-		this.shares = (100*(this.deposited/this.totalDeposited));
-		this.sharesLabel.string = this.shares.toFixed(4) + " %";
-
-		// APY: it depends on shares and claimed token amount
-		this.setApy();
-	    }.bind(this))
-	    .catch(function(err){
-		cc.error(err);
-	    }.bind(this));
-
+	this.updateInfo(cc.sessionId);
     },
 
-    setApy() {
-	cc.stakingContract.methods.sessions(cc.lpTokenAddress)
-	    .call()
-	    .then(function(session) {
-		let amount = parseFloat(web3.utils.fromWei(session.amount));
-		let claimed = parseFloat(web3.utils.fromWei(session.claimed));
+    setApy(session, balance) {
+	let amount = parseFloat(web3.utils.fromWei(session.amount));
+	let claimed = parseFloat(web3.utils.fromWei(session.claimed));
 
-		if (claimed >= amount) {
-		    this.apyLabel.string = "0 %";
-		    return;
-		}
+	if (amount == 0) {
+	    this.apyLabel.string = "0 %";
+	    return;
+	}
 
-		let startUnix = parseInt(session.startTime);
-		let period = parseInt(session.period)
-		let endUnix = period + startUnix;
-		let startTime = new Date(startUnix * 1000);
-		// Event didn't start yet
-		if (startTime > Date.now()) {
-		    this.apyLabel.string = "0 %";
-		    return;
-		}
+	let startUnix = parseInt(session.startTime);
+	let period = parseInt(session.period);
+	let endUnix = period + startUnix;
+	let startTime = new Date(startUnix * 1000);
+	// Event didn't start yet
+	if (startTime > Date.now()) {
+	    this.apyLabel.string = "0 %";
+	    return;
+	}
 
-		let endTime = new Date(endUnix * 1000);
-		// Event finished
-		if (endTime < Date.now()) {
-		    this.apyLabel.string = "0 %";
-		    return;
-		}
+	let endTime = new Date(endUnix * 1000);
+	// Event finished
+	if (endTime < Date.now()) {
+	    this.apyLabel.string = "0 %";
+	    return;
+	}
 
-		//--------------------
-		// APY Calculation
-		//--------------------
+	//--------------------
+	// APY Calculation
+	//--------------------
 
-		let cwsSupply = parseFloat(web3.utils.fromWei(session.totalReward));
-		let cwsPrice = 1; // in WETH.
+	let cwsSupply = parseFloat(web3.utils.fromWei(session.totalReward));
+	let cwsPrice = 1; // in WETH.
 		
-		// Reward per second:
-		let rewardUnit = cwsSupply/period;
-		// interest per second.
-		// let interest = rewardUnit*(this.shares*0.01); // shares in %
+	// Reward per second:
+	let rewardUnit = cwsSupply/period;
 		
-		// units per year, units are seconds
-		let annualUnits = 31556952;
-		let annualReward = rewardUnit * annualUnits * cwsPrice;
-		let apy = (annualReward/amount)*100;
+	// units per year, units are seconds
+	let annualUnits = 31556952;  // 1 year in seconds
+	let annualReward = rewardUnit * annualUnits * cwsPrice;
+	let apy = (annualReward/amount)*100;
 
-		this.apyLabel.string = apy.toFixed(4) + " %";
-	    }.bind(this))
-	    .catch(function(err){
-		console.error(err);
-	    }.bind(this));
+	this.apyLabel.string = apy.toFixed(4) + " %";
     }
 });
