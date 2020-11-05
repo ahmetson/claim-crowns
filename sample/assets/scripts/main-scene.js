@@ -168,6 +168,20 @@ cc.Class({
 	}.bind(this))
     },
 
+    listenContractEvents() {
+	cc.stakingContract.events.allEvents({})
+	    .on('data', async function(data){
+		if (data.event == 'Claimed') {
+		    // todo
+		} else if (data.event == 'Withdrawn') {
+		    // todo
+		} else if (data.event == 'Deposited') {
+		    // todo
+		}
+	    }.bind(this))
+	    .on('error', cc.error);
+    },
+
     onClaim(event) {
         this.progressLabel.string = "Claim "+this.claimable+" CWS...";
 
