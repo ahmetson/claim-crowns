@@ -37,14 +37,15 @@
       span Recompiling scripts, please wait for refresh...
 
     script(type='text/javascript' charset='utf-8' src='settings.js')
-    script(type='text/javascript' charset='utf-8' src='app/editor/static/preview-templates/modular.js')
+    script(type='text/javascript' charset='utf-8' src='preview-scripts/__quick_compile__.js')
     script(type='text/javascript' charset='utf-8' src='app/editor/static/preview-templates/boot.js')
     script(type='text/javascript' charset='utf-8' src='/socket.io/socket.io.js')
-
     script(type='text/javascript' charset='utf-8' src="https://cdn.jsdelivr.net/npm/web3@1.2.9/dist/web3.min.js")
-
     script(type='text/javascript').
-        window.__socket_io__ = window.io;
+      window.__socket_io__ = window.io;
+      // window.CC_PHYSICS_CANNON = #{enableCannonPhysics};
+      // window.CC_PHYSICS_BUILTIN = #{enableBuiltinPhysics};
+
     if enableDebugger
       script(type='text/javascript' charset='utf-8' src='app/node_modules/vconsole/dist/vconsole.min.js')
     script(type='text/javascript' charset='utf-8' src='app/engine/bin/' + cocos2d)

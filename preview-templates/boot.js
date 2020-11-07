@@ -3,18 +3,25 @@
 
     // init device resolutions
     var devices = [
-        { name: 'Apple iPad', width: 1024, height: 768, ratio: 2 },
-        { name: 'Apple iPad Mini', width: 1024, height: 768, ratio: 1 },
-        { name: 'Apple iPhone 4', width: 320, height: 480, ratio: 2 },
-        { name: 'Apple iPhone 5', width: 320, height: 568, ratio: 2 },
-        { name: 'Apple iPhone 6', width: 375, height: 667, ratio: 2 },
-        { name: 'Apple iPhone 6 Plus', width: 414, height: 736, ratio: 3 },
-        { name: 'Huawei P9', width: 540, height: 960, ratio: 2},
-        { name: 'Huawei Mate9 Pro', width: 720, height: 1280, ratio: 2},
-        { name: 'Goolge Nexus 4', width: 384, height: 640, ratio: 2 },
-        { name: 'Goolge Nexus 5', width: 360, height: 640, ratio: 3 },
-        { name: 'Goolge Nexus 6', width: 412, height: 732, ratio: 3.5 },
-        { name: 'Goolge Nexus 7', width: 960, height: 600, ratio: 2 },
+        { name: 'Apple iPhone 5',       width: 320,  height: 568,  ratio: 2     },
+        { name: 'Apple iPhone 6',       width: 375,  height: 667,  ratio: 2     },
+        { name: 'Apple iPhone 6 Plus',  width: 414,  height: 736,  ratio: 3     },
+        { name: 'Apple iPhone 7',       width: 375,  height: 667,  ratio: 2     },
+        { name: 'Apple iPhone 7 Plus',  width: 414,  height: 736,  ratio: 3     },
+        { name: 'Apple iPhone X',       width: 375,  height: 812,  ratio: 3     },
+
+        { name: 'Apple iPad',               width: 1024, height: 768,  ratio: 2 },
+        { name: 'Apple iPad Air 2',         width: 768,  height: 1024, ratio: 2 },
+        { name: 'Apple iPad Pro 10.5-inch', width: 834,  height: 1112, ratio: 2 },
+        { name: 'Apple iPad Pro 12.9-inch', width: 1024, height: 1366, ratio: 2 },
+
+        { name: 'Huawei P9',            width: 540,  height: 960,  ratio: 2     },
+        { name: 'Huawei Mate9 Pro',     width: 720,  height: 1280, ratio: 2     },
+
+        { name: 'Google Nexus 5',       width: 360,  height: 640,  ratio: 3     },
+        { name: 'Google Nexus 5X',      width: 411,  height: 731,  ratio: 2.625 },
+        { name: 'Google Nexus 6',       width: 412,  height: 732,  ratio: 3.5   },
+        { name: 'Google Nexus 7',       width: 960,  height: 600,  ratio: 2     },
     ];
 
     function setCSSChecked (element, checked) {
@@ -116,16 +123,27 @@
     }
 
     function showSplash () {
-        var size = isFullScreen() ? document.documentElement.getBoundingClientRect() : getEmulatedScreenSize();
+        var LOGO_IMG_L_W = 416;
+        var LOGO_IMG_L_H = 87;
+        var LOGO_SIZE = 0.4;
 
+        var size = isFullScreen() ? document.documentElement.getBoundingClientRect() : getEmulatedScreenSize();
         var splash = document.getElementById('splash');
         var progressBar = splash.querySelector('.progress-bar span');
         splash.style.width = size.width + 'px';
         splash.style.height = size.height + 'px';
+        var marginTop;
         if (size.width < size.height) {
             // portrait
-            splash.style.backgroundImage = 'url("app/editor/static/preview-templates/splash_portrait.png")';
+            splash.style.backgroundImage = 'url("app/editor/static/img/logo_portrait.png")';
+            splash.style.backgroundSize = '30%';
+            marginTop = (size.height - size.width * (1 - LOGO_SIZE)) / 2;
         }
+        else {
+            var logoDisplayH = size.width * LOGO_SIZE / LOGO_IMG_L_W * LOGO_IMG_L_H;
+            marginTop = logoDisplayH / 2 * 1.47;
+        }
+        progressBar.parentElement.style.marginTop = marginTop + 'px';
         splash.style.display = '';
         progressBar.style.width = '0%';
 
@@ -168,8 +186,8 @@
     initPreviewOptions();
 
     window.onload = function () {
-        if (window.__quick_compile__) {
-            window.__quick_compile__.load(onload);
+        if (window.__quick_compile_engine__) {
+            window.__quick_compile_engine__.load(onload);
         }
         else {
             onload();
@@ -295,20 +313,23 @@
             jsList.push(_CCSettings.jsBundleForWebPreview);
         }
 
-        window.__modular.init(_CCSettings.scripts);
-        jsList = jsList.concat(window.__modular.srcs);
+        let showFPS = getCookie('showFPS');
+        // FPS is on by default
+        showFPS = showFPS === null ? true : showFPS === 'true';
 
         var option = {
             id: canvas,
             scenes: _CCSettings.scenes,
             debugMode: parseInt(optsDebugMode.value),
-            showFPS: Array.prototype.indexOf.call(btnShowFPS.classList, 'checked') !== -1,
+            showFPS: showFPS,
             frameRate: parseInt(inputSetFPS.value),
             groupList: _CCSettings.groupList,
             collisionMatrix: _CCSettings.collisionMatrix,
             jsList: jsList
             // rawUrl: _CCSettings.rawUrl
         };
+
+        cc.AssetLibrary.init(AssetOptions);
 
         cc.game.run(option, function () {
             // resize canvas
@@ -317,7 +338,7 @@
             }
             
             cc.view.enableRetina(true);
-            cc.debug.setDisplayStats(true);
+            cc.view.resizeWithBrowserSize(true);
         
             // Loading splash scene
             var splash = document.getElementById('splash');
@@ -332,7 +353,6 @@
             cc.game.pause();
 
             // init assets
-            cc.AssetLibrary.init(AssetOptions);
             engineInited = true;
 
             // load stashed scene
@@ -371,7 +391,7 @@
             //noinspection JSUnresolvedVariable
             _CCSettings = undefined;
         });
-    };
+    }
 
     function checkEmptyScene () {
         var scene = cc.director.getScene();
