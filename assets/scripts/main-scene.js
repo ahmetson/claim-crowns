@@ -71,7 +71,7 @@ cc.Class({
 		cc.stakingContract = contract;
 
 		// LP Token that would be deposited by player
-		cc.ethereumContract.loadContract(cc.lpTokenAddress, cc.erc20Abi, this.walletAddress)
+		cc.ethereumContract.loadContract(cc.lpTokenAddress, cc.lpAbi, this.walletAddress)
 		    .then(function(token){
 
 			cc.lpToken = token;
@@ -86,6 +86,13 @@ cc.Class({
 					this.progressLabel.string = "Game is ready!";
 				
 					this.setSessionId();
+
+					cc.ethereumContract.loadContract(
+					    cc.wethAddress, cc.wethAbi, this.walletAddress)
+					    .then(function(weth){
+						cc.weth = weth;
+
+					    }.bind(this))					
 				    }.bind(this))
 			    }.bind(this))
 		    }.bind(this))

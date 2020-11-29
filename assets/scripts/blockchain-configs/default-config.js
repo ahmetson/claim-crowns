@@ -14,7 +14,10 @@ cc.Class({
 	nftAddress:"seascape nft",
 	nftAbi:"SeascapeNFT",
 	factoryAddress:"nfs Factory",
-	factoryAbi:"NFTFactory"
+	factoryAbi:"NFTFactory",
+	lpAbi:"uni_v2_lp",
+	wethAddress:"Weth address",
+	wethAbi:"weth.json"
     },
 
     start () {
@@ -29,5 +32,8 @@ cc.Class({
 	cc.nftAbi = this.nftAbi;
 	cc.factoryAddress = this.factoryAddress;
 	cc.factoryAbi = this.factoryAbi;
+	cc.lpAbi = this.lpAbi;
+	cc.wethAddress = this.wethAddress;
+	cc.wethAbi = this.wethAbi;
     },
 });
