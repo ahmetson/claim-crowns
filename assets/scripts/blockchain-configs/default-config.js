@@ -17,7 +17,9 @@ cc.Class({
 	factoryAbi:"NFTFactory",
 	lpAbi:"uni_v2_lp",
 	wethAddress:"Weth address",
-	wethAbi:"weth.json"
+	wethAbi:"weth",
+	nftRushAddress:"nft rush address",
+	nftRushAbi:"NftRush"
     },
 
     start () {
@@ -35,5 +37,7 @@ cc.Class({
 	cc.lpAbi = this.lpAbi;
 	cc.wethAddress = this.wethAddress;
 	cc.wethAbi = this.wethAbi;
+	cc.nftRushAddress = this.nftRushAddress;
+	cc.nftRushAbi = this.nftRushAbi;
     },
 });
