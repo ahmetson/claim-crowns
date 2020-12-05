@@ -4,6 +4,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+	backendUrl: "http://localhost:4000/",
 	networkId: 4,
 	networkName: "rinkeby",
 	stakingAddress:"staking address", //Address of Smartcontract (Miniapp) on blockchain
@@ -23,6 +24,7 @@ cc.Class({
     },
 
     start () {
+	cc.backendUrl = this.backendUrl;
 	cc.networkId = parseInt(this.networkId);
 	cc.networkName = this.networkName;
 	cc.stakingAddress = this.stakingAddress;
