@@ -40,21 +40,21 @@ cc.Class({
     onLoadContracts(state, address) {
 	// Nft Rush (aka Staking game smartcontract
 	cc.ethereumContract
-	    .loadContract(cc.nftRushAddress, cc.stakingnftRushAbi, cc.walletAddress)
+	    .loadContract(cc.nftRushAddress, cc.nftRushAbi, cc.walletAddress)
 	    .then(function(contract){
 		cc.nftRush = contract;
 
 		// LP Token that would be deposited by player
-		cc.ethereumContract.loadContract(cc.cwsAddress, cc.lpAbi, this.walletAddress)
+		cc.ethereumContract.loadContract(cc.crownsAddress, cc.erc20Abi, cc.walletAddress)
 		    .then(function(token){
 
 			cc.cws = token;
 
-			cc.ethereumContract.loadContract(cc.nftAddress, cc.nftAbi, this.walletAddress)
+			cc.ethereumContract.loadContract(cc.nftAddress, cc.nftAbi, cc.walletAddress)
 			    .then(function(nft){
 				cc.nft = nft;
 
-				cc.ethereumContract.loadContract(cc.factoryAddress, cc.factoryAbi, this.walletAddress)
+				cc.ethereumContract.loadContract(cc.factoryAddress, cc.factoryAbi, cc.walletAddress)
 				    .then(function(factory){
 					cc.factory = factory;
 					this.progressLabel.string = "Successfully loaded!";
@@ -84,11 +84,15 @@ cc.Class({
 	}.bind(this));
     },
 
-    initGame(sessionId) {
-
-	cc.nftRush.methods.sessions(sessionId).call().then(function(session){
+    onInitGame() {
+	if (cc.sessionId == 0) {
+	    alert("No session was found");
+	    return;
+	}
+	
+	cc.nftRush.methods.sessions(cc.sessionId).call().then(function(session){
 	    cc.session = session;
-	    cc.nftRush.methods.balances(sessionId, cc.walletAddress).call().then(function(balance){
+	    cc.nftRush.methods.balances(cc.sessionId, cc.walletAddress).call().then(function(balance){
 		cc.balance = balance;
 
                 // 1. get session end from blockchain		
@@ -105,7 +109,7 @@ cc.Class({
 		
 		// 3. player minting time from blockchain
 		this.lastMintedTime = web3.utils.fromWei(balance.mintedTime);
-		this.mintedTime = new Date(this.lastMintedTime * 1000).toString();
+		this.mintTime.string = new Date(this.lastMintedTime * 1000).toString();
 		
 		// 4. next minting token quality from backend
 		this.fetchTokenQuality();
@@ -116,12 +120,8 @@ cc.Class({
     },
 
     setSpent(amount) {
-	this.spent = web3.utils.fromWei(amount);	
-	this.spentLabel = this.spent + " CWS";	
-    },
-
-    fetchTokenQuality() {
-	this.qualityLabel.string = "not implemented yet...";
+	this.spent = parseInt(web3.utils.fromWei(amount));	
+	this.spentLabel.string = this.spent + " CWS";	
     },
 
     fetchLeaderboards() {	
@@ -144,7 +144,7 @@ cc.Class({
     },
 
     onMint(event) {
-	let mintableTime = (cc.session.interval + this.lastMintedTime) * 1000;
+	let mintableTime = (parseInt(cc.session.interval) + parseInt(this.lastMintedTime)) * 1000;
 	let left = mintableTime - Date.now();
 	if (left > 0) {
 	    alert("Left "+parseInt(left/1000)+" seconds to mint");
@@ -168,6 +168,9 @@ cc.Class({
 	    .on('receipt', function(receipt){
 		this.progressLabel.string = "Nft Minted!";		
 		this.lastMintedTime = parseInt(Date.now()/1000);
+		this.mintTime.string = new Date(this.lastMintedTime * 1000).toString();
+
+		this.setSpent(web3.utils.toWei("0"));
 	    }.bind(this))
 	    .on('error', function(err){
 		this.progressLabel.string = err.toString();
@@ -191,9 +194,9 @@ cc.Class({
     },
 
     approve(allowance, amount) {
-        this.progressLabel.string = "Approve "+this.amount+" CWS...";
+        this.progressLabel.string = "Approve "+allowance+" CWS...";
 
-	cc.lpToken.methods.approve(cc.nftRushAddress, allowance)
+	cc.cws.methods.approve(cc.nftRushAddress, allowance)
 	    .send()
 	    .on('transactionHash', function(hash){
 		this.progressLabel.string = "Please wait tx confirmation...";
@@ -246,8 +249,11 @@ cc.Class({
 	    }.bind(this))
 	    .on('receipt', function(receipt){
 		this.progressLabel.string = "Spent!";
-		let newSpent = web3.utils.toWei((this.spent + this.spendAmount).toString());
+		let newSpent = web3.utils.toWei((parseInt(this.spent) + parseInt(this.spendAmount)).toString());
 		this.setSpent(newSpent);
+		// fetch a new quality from server,
+		// might need to wait for some seconds...
+		setTimeout(this.fetchTokenQuality().bind(this), 5 * 1000);		    
 	    }.bind(this))
 	    .on('error', function(err){
 		this.progressLabel.string = err.toString();
@@ -255,4 +261,23 @@ cc.Class({
 	    }.bind(this));
     },
 
+    fetchTokenQuality() {	
+	fetch(this.getQualityUrl())
+	    .then((response) => {
+		response.json()
+		    .then((json) => {
+			if (json.quality != undefined) {
+			    this.quality = parseInt(json.quality);
+			    this.qualitySignature = json.signature;
+			    cc.log("Quality was set to "+this.quality);
+			    this.qualityLabel.string = this.quality;
+			}
+		    });
+	    })
+	    .catch(console.error)
+    },
+
+    getQualityUrl () {
+	return (cc.backendUrl + "nftrush/quality/" + cc.walletAddress);
+    },
 });
