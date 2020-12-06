@@ -253,7 +253,7 @@ cc.Class({
 		this.setSpent(newSpent);
 		// fetch a new quality from server,
 		// might need to wait for some seconds...
-		setTimeout(this.fetchTokenQuality().bind(this), 5 * 1000);		    
+		setTimeout(this.fetchTokenQuality.bind(this), 5 * 1000);		    
 	    }.bind(this))
 	    .on('error', function(err){
 		this.progressLabel.string = err.toString();
@@ -271,6 +271,7 @@ cc.Class({
 			    this.qualitySignature = json.signature;
 			    cc.log("Quality was set to "+this.quality);
 			    this.qualityLabel.string = this.quality;
+			    cc.log("Quality signature: "+json.signature);
 			}
 		    });
 	    })
