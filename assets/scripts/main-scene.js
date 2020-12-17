@@ -7,7 +7,8 @@ cc.Class({
     properties: {
         unlockButton:cc.Button,
         gameOneButton:cc.Button,
-	gameTwoButton:cc.Button
+	gameTwoButton:cc.Button,
+	gameThreeButton:cc.Button	
     },
 
 
@@ -15,6 +16,7 @@ cc.Class({
         this.unlockButton.node.on('click',this.onUnlockWallet,this);
         this.gameOneButton.node.on('click',this.onGameOne,this);
 	this.gameTwoButton.node.on('click',this.onGameTwo,this);
+	this.gameThreeButton.node.on('click',this.onGameThree,this);	
 
 	cc.walletConnect = new ethereumWalletConnect();
 	cc.ethereumContract = ethereumContract;
@@ -55,5 +57,15 @@ cc.Class({
 	}
 
 	cc.director.loadScene("game-two");
+    },
+
+    
+    onGameThree(state, address) {	
+	if (cc.walletAddress == undefined) {
+	    alert("Please unlock wallet first!");
+	    return;
+	}
+
+	cc.director.loadScene("game-three");
     },
 });
