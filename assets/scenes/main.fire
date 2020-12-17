@@ -201,7 +201,7 @@
       "array": [
         0,
         0,
-        275.21205329094687,
+        349.87426312891324,
         0,
         0,
         0,
@@ -2013,7 +2013,7 @@
     "backendUrl": "http://192.168.86.104:4000/",
     "networkId": 1330,
     "networkName": "development",
-    "stakingAddress": "0xe1c01805a21ee0DC535afa93172a5F21CE160649",
+    "stakingAddress": "0x8613B8E442219e4349fa5602C69431131a7ED114",
     "stakingAbi": "Staking",
     "lpTokenAddress": "0x50aF0922d65D04D87d810048Dc640E2474eBfbd9",
     "crownsAddress": "0x055cBfeD6df4AFE2452b18fd3D2592D1795592b4",
