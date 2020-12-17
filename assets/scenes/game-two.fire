@@ -90,19 +90,19 @@
         "__id__": 71
       },
       {
-        "__id__": 93
+        "__id__": 95
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 99
-      },
-      {
-        "__id__": 100
-      },
-      {
         "__id__": 101
+      },
+      {
+        "__id__": 102
+      },
+      {
+        "__id__": 103
       }
     ],
     "_prefab": null,
@@ -192,7 +192,7 @@
       "array": [
         0,
         0,
-        541.2658773652742,
+        349.87426312891324,
         0,
         0,
         0,
@@ -3502,12 +3502,15 @@
       },
       {
         "__id__": 90
+      },
+      {
+        "__id__": 92
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 92
+        "__id__": 94
       }
     ],
     "_prefab": null,
@@ -3960,7 +3963,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 250,
+      "width": 300,
       "height": 200
     },
     "_anchorPoint": {
@@ -4011,11 +4014,11 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "asdas\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdad\nadad",
-    "_N$string": "asdas\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdad\nadad",
+    "_string": "asdasasdadazxczxcxzczxczczxczxczxczxcxzczxczxczxc\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdad\nadad",
+    "_N$string": "asdasasdadazxczxcxzczxczczxczxczxczxcxzczxczxczxc\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdad\nadad",
     "_fontSize": 17.5,
     "_lineHeight": 20,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_N$file": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
@@ -4025,7 +4028,7 @@
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 0,
     "_N$fontFamily": "Arial",
-    "_N$overflow": 1,
+    "_N$overflow": 2,
     "_N$cacheMode": 0,
     "_id": "e6od5VRlBCHp3NHVmXOFtP"
   },
@@ -4054,7 +4057,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 250,
+      "width": 300,
       "height": 200
     },
     "_anchorPoint": {
@@ -4066,7 +4069,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -111.535,
+        -144.525,
         -181.528,
         0,
         0,
@@ -4105,11 +4108,11 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "asdas\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdad\nadad",
-    "_N$string": "asdas\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdad\nadad",
+    "_string": "asdas asd asdasd das adad asd asdsadasdasddasdasaasdasd\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdadd asdas dsa dasdadsa\nadad",
+    "_N$string": "asdas asd asdasd das adad asd asdsadasdasddasdasaasdasd\nasda\nsdasd\nasd\nasdasdsadsa\nasdasdasd\nasdasdasd\nadasdsad\nadasda\nadasdas\nasdadd asdas dsa dasdadsa\nadad",
     "_fontSize": 17.5,
     "_lineHeight": 20,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_N$file": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
@@ -4119,7 +4122,7 @@
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 0,
     "_N$fontFamily": "Arial",
-    "_N$overflow": 1,
+    "_N$overflow": 2,
     "_N$cacheMode": 0,
     "_id": "d8yhW0zlJHFqVzKpM+9Gsz"
   },
@@ -4437,7 +4440,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -112.67,
+        -145.66,
         -165.547,
         0,
         0,
@@ -4495,6 +4498,100 @@
     "_id": "bdyJVfqNRM64Lx7kq5QmfD"
   },
   {
+    "__type__": "cc.Node",
+    "_name": "other leaderboards",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 71
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 93
+      }
+    ],
+    "_prefab": null,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 262.18,
+      "height": 105.2
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 1
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        143.125,
+        -149.761,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": "a1a0Im6NJJmI3pXX5rhzzG"
+  },
+  {
+    "__type__": "cc.Label",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 92
+    },
+    "_enabled": true,
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
+    "_useOriginalSize": false,
+    "_string": "Minted tokens,\nand all time minted tokens are \nsame, as spent leaderboards.\n\nJust rename \"spent\" with \"minted\"",
+    "_N$string": "Minted tokens,\nand all time minted tokens are \nsame, as spent leaderboards.\n\nJust rename \"spent\" with \"minted\"",
+    "_fontSize": 17.5,
+    "_lineHeight": 20,
+    "_enableWrapText": true,
+    "_N$file": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
+    "_N$horizontalAlign": 0,
+    "_N$verticalAlign": 1,
+    "_N$fontFamily": "Arial",
+    "_N$overflow": 0,
+    "_N$cacheMode": 0,
+    "_id": "3eTP11bDdBbLdUBP4kQ2Zb"
+  },
+  {
     "__type__": "cc.Widget",
     "_name": "",
     "_objFlags": 0,
@@ -4530,19 +4627,19 @@
     },
     "_children": [
       {
-        "__id__": 94
+        "__id__": 96
       }
     ],
     "_active": false,
     "_components": [
       {
-        "__id__": 96
-      },
-      {
-        "__id__": 97
-      },
-      {
         "__id__": 98
+      },
+      {
+        "__id__": 99
+      },
+      {
+        "__id__": 100
       }
     ],
     "_prefab": null,
@@ -4598,13 +4695,13 @@
     "_name": "Please wait...",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 93
+      "__id__": 95
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 95
+        "__id__": 97
       }
     ],
     "_prefab": null,
@@ -4660,7 +4757,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 94
+      "__id__": 96
     },
     "_enabled": true,
     "_materials": [],
@@ -4688,7 +4785,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 93
+      "__id__": 95
     },
     "_enabled": true,
     "_materials": [],
@@ -4716,7 +4813,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 93
+      "__id__": 95
     },
     "_enabled": true,
     "_layoutSize": {
@@ -4748,7 +4845,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 93
+      "__id__": 95
     },
     "_enabled": true,
     "alignMode": 1,
