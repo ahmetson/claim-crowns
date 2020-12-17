@@ -35,6 +35,11 @@ cc.Class({
 	this.progressLabel.string = "";
 
 	cc.ethereumContract = ethereumContract;
+
+	this.spentTodayPath = "nftrush/leaderboard/spent/today/";
+	this.spentAlltimePath = "nftrush/leaderboard/spent/alltime/";
+	this.mintedTodayPath = "nftrush/leaderboard/minted/today/";
+	this.mintedAlltimePath = "nftrush/leaderboard/minted/alltime/";
     },
 
     onLoadContracts(state, address) {
@@ -125,9 +130,51 @@ cc.Class({
     },
 
     fetchLeaderboards() {	
-	this.spentTodayList = "not implemented yet...";
-	this.spentAlltimeList.string = "not implemented yet...";
-    },
+	this.spentTodayList.string = "";
+	this.spentAlltimeList.string = "";
+	
+	// Fetching spent cws leaderboard for today:
+	let spentTodayUrl = cc.backendUrl + this.spentTodayPath + cc.sessionId;
+	fetch(spentTodayUrl)
+	    .then((response) => {		
+		return response.json();		
+	    })	
+	    .then((data)=> {    // json data
+
+		if (data.length == 0) {
+		    this.spentTodayList.string = "No leaderboard winners";
+		} else {
+		    // example of showing the list of leaderboard winners
+
+		    data.forEach(function(row) {
+			let walletAddress = row[0];
+			let score = row[1];
+			this.spentTodayList.string += `${walletAddress}: ${score}\n`;
+		    }.bind(this));
+		}
+	    });
+
+	// Fetching spent cws leaderboard for all session time:	
+	let spentAlltimeUrl = cc.backendUrl + this.spentAlltimePath + cc.sessionId;
+	fetch(spentAlltimeUrl)
+	    .then((response) => {		
+		return response.json();		
+	    })	
+	    .then((data) => {    // json data
+
+		if (data.length == 0) {
+		    this.spentTodayList.string = "No leaderboard winners";
+		} else {
+		    // example of showing the list of leaderboard winners
+	
+		    data.forEach(function(row) {
+			let walletAddress = row[0];
+			let score = row[1];
+			this.spentAlltimeList.string += `${walletAddress}: ${score}\n`;
+		    }.bind(this));
+		}
+	    });	
+    },    
 
     listenContractEvents() {
 	cc.stakingContract.events.allEvents({})
