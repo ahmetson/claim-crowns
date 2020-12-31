@@ -20,7 +20,9 @@ cc.Class({
 	wethAddress:"Weth address",
 	wethAbi:"weth",
 	nftRushAddress:"nft rush address",
-	nftRushAbi:"NftRush"
+	nftRushAbi:"NftRush",
+	nftStakingAddress:"nft staking address",
+	nftStakingAbi:"NftStaking",
     },
 
     start () {
@@ -41,5 +43,7 @@ cc.Class({
 	cc.wethAbi = this.wethAbi;
 	cc.nftRushAddress = this.nftRushAddress;
 	cc.nftRushAbi = this.nftRushAbi;
+	cc.nftStakingAddress = this.nftStakingAddress;
+	cc.nftStakingAbi = this.nftStakingAbi;
     },
 });
