@@ -113,7 +113,7 @@ cc.Class({
 		this.setSpent(balance.amount);
 		
 		// 3. player minting time from blockchain
-		this.lastMintedTime = web3.utils.fromWei(balance.mintedTime);
+		this.lastMintedTime = balance.mintedTime;
 		this.mintTime.string = new Date(this.lastMintedTime * 1000).toString();
 		
 		// 4. next minting token quality from backend
