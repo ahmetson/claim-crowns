@@ -12,6 +12,7 @@ cc.Class({
 	spendButton:cc.Button,
 	mintButton:cc.Button,
 	fetchButton:cc.Button,
+	claimDailySpentButton:cc.Button,
 
 	progressLabel:cc.Label,
 
@@ -31,6 +32,7 @@ cc.Class({
 	this.spendButton.node.on('click',this.onSpend,this);
 	this.mintButton.node.on('click',this.onMint,this);
 	this.fetchButton.node.on('click',this.onFetch,this);
+	this.claimDailySpentButton.node.on('click', this.onClaimDailySpent,this);
 
 	this.progressLabel.string = "";
 
@@ -324,6 +326,30 @@ cc.Class({
 	    })
 	    .catch(console.error)
     },
+
+    onClaimDailySpent(event) {
+	// use any of this methods below to claim leaderboard rewards:
+	//
+	//   claimDailySpent
+	//   claimAllTimeSpent
+	//   claimDailyMinted
+	//   claimAllTimeMinted
+	this.progressLabel.string = "Claiming a reward...";
+
+	cc.nftRush.methods.claimDailySpent()	
+	    .send()
+	    .on('transactionHash', function(hash){
+		this.progressLabel.string = "Please wait tx confirmation...";
+	    }.bind(this))
+	    .on('receipt', function(receipt){
+		this.progressLabel.string = "Reward was claimed!";
+	    }.bind(this))
+	    .on('error', function(err){
+		this.progressLabel.string = err.toString();
+		cc.error(err);
+	    }.bind(this));	
+    },
+
 
     getQualityUrl () {
 	return (cc.backendUrl + "nftrush/quality/" + cc.walletAddress);
