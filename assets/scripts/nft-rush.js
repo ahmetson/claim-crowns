@@ -96,6 +96,21 @@ cc.Class({
 	    alert("No session was found");
 	    return;
 	}
+
+	cc.phxSocket = new Phoenix.Socket(cc.backendWs, {})
+	cc.phxSocket.connect();
+
+	cc.phxChannel = cc.phxSocket.channel("nft_rush:"+cc.walletAddress, {})
+
+	cc.phxChannel.on("new_quality", msg => {
+	    console.log("Got message", msg.body)
+	    this.onTokenFetch(msg.body);
+	});
+
+	cc.phxChannel.join()	
+	    .receive("ok", ({messages}) => console.log("catching up", messages) )	
+	    .receive("error", ({reason}) => console.log("failed join", reason) )	
+	    .receive("timeout", () => console.log("Networking issue. Still waiting..."))
 	
 	cc.nftRush.methods.sessions(cc.sessionId).call().then(function(session){
 	    cc.session = session;
@@ -302,7 +317,7 @@ cc.Class({
 		this.setSpent(newSpent);
 		// fetch a new quality from server,
 		// might need to wait for some seconds...
-		setTimeout(this.fetchTokenQuality.bind(this), 5 * 1000);		    
+		//setTimeout(this.fetchTokenQuality.bind(this), 5 * 1000);		    
 	    }.bind(this))
 	    .on('error', function(err){
 		this.progressLabel.string = err.toString();
@@ -314,20 +329,22 @@ cc.Class({
 	fetch(this.getQualityUrl())
 	    .then((response) => {
 		response.json()
-		    .then((json) => {
-			if (json.quality != undefined) {
-			    this.quality = parseInt(json.quality);
-			    this.qualitySignature = json.signature;
-			    cc.log("Quality was set to "+this.quality);
-			    this.qualityLabel.string = this.quality;
-			    cc.log("Quality signature: "+json.signature);
-			}
+		    .then(json => {
+			this.onTokenFetch(json)
 		    });
 	    })
 	    .catch(console.error)
     },
 
-    onClaimDailySpent(event) {
+    onTokenFetch(json) {
+	if (json.quality != undefined) {	    
+	    this.quality = parseInt(json.quality);	    
+	    this.qualitySignature = json.signature;	    
+	    cc.log("Quality was set to "+this.quality);	    
+	    this.qualityLabel.string = this.quality;	    
+	    cc.log("Quality signature: "+json.signature);	    
+	}	
+    },
 	// use any of this methods below to claim leaderboard rewards:
 	//
 	//   claimDailySpent
