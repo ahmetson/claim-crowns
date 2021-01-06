@@ -345,14 +345,33 @@ cc.Class({
 	    cc.log("Quality signature: "+json.signature);	    
 	}	
     },
+
+    checkDailySpentClaimable() {
+	// use any of this methods below to check whether
+	// player can claim leaderboard reward or not.
+	//
+	//   spentDailyClaimables;
+	//   spentAllTimeClaimables;
+	//   mintedDailyClaimables;
+	//   mintedAllTimeClaimables;
+	cc.nftRush.methods.spentDailyClaimables(cc.walletAddress)
+	    .call()
+	    .then((amount) => {
+		if (amount > 0) {
+		    this.claimDailySpent();
+		} else {
+		    alert("No claimable reward found");
+		}
+	    });
+    },
+
+    claimDailySpent() {
 	// use any of this methods below to claim leaderboard rewards:
 	//
 	//   claimDailySpent
 	//   claimAllTimeSpent
 	//   claimDailyMinted
 	//   claimAllTimeMinted
-	this.progressLabel.string = "Claiming a reward...";
-
 	cc.nftRush.methods.claimDailySpent()	
 	    .send()
 	    .on('transactionHash', function(hash){
@@ -365,6 +384,12 @@ cc.Class({
 		this.progressLabel.string = err.toString();
 		cc.error(err);
 	    }.bind(this));	
+
+    },
+    
+    onClaimDailySpent(event) {
+	this.progressLabel.string = "Claiming a reward...";
+	this.checkDailySpentClaimable();
     },
 
 
