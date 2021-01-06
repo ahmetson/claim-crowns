@@ -2387,7 +2387,8 @@
       "__id__": 2
     },
     "_enabled": false,
-    "backendUrl": "http://192.168.86.104:4000/",
+    "backendUrl": "http://localhost:4000/",
+    "backendWs": "ws://localhost:4000/socket",
     "networkId": 1330,
     "networkName": "development",
     "stakingAddress": "0x8613B8E442219e4349fa5602C69431131a7ED114",
@@ -2402,8 +2403,10 @@
     "lpAbi": "uni_v2_lp",
     "wethAddress": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
     "wethAbi": "weth",
-    "nftRushAddress": "0x8613B8E442219e4349fa5602C69431131a7ED114",
+    "nftRushAddress": "0xe2092A19f37D2DBBfa9c41C9b83CBAAA1294548f",
     "nftRushAbi": "NftRush",
+    "nftStakingAddress": "nft staking address",
+    "nftStakingAbi": "NftStaking",
     "_id": "ebdHPioiRILb4+66JZmg4O"
   },
   {
@@ -2415,6 +2418,7 @@
     },
     "_enabled": true,
     "backendUrl": "https://api-test.blocklords.io:81/",
+    "backendWs": "wss://api-test.blocklords.io:81/socket",
     "networkId": 4,
     "networkName": "rinkeby",
     "stakingAddress": "0xBCd6277B5A27390773B4657A7406E1c3BA6165c0",
@@ -2429,8 +2433,10 @@
     "lpAbi": "uni_v2_lp",
     "wethAddress": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
     "wethAbi": "weth",
-    "nftRushAddress": "0xE75E9aF605c69E06Ff6842b413043FB3AF493F37",
+    "nftRushAddress": "0xA8bB6655bcf28862bb5fC997D25e4AD3aeCa8488",
     "nftRushAbi": "NftRush",
+    "nftStakingAddress": "0xF357647bb09557DA29ecD0bF24BC681a422C3c5e",
+    "nftStakingAbi": "NftStaking",
     "_id": "adUfJ2OptFCJws9l9wWuba"
   },
   {
