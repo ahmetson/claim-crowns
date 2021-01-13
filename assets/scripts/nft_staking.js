@@ -35,6 +35,14 @@ cc.Class({
 
 	totalEarned: cc.Label,
 	yourPower: cc.Label,
+
+	///------------------------------------------------------------
+	/// Nft list
+	///------------------------------------------------------------
+	nftListLayout: cc.Node,
+	nftListClose: cc.Button,
+	nftListContent: cc.Node,
+	nftItemPrefab: cc.Prefab,
     },
 
 
@@ -60,6 +68,12 @@ cc.Class({
 
 	this.balances = [];
 	this.totalClaimable = 0;
+
+	/// --------------------
+	/// initiate nft list
+	/// --------------------
+	this.hideNftList();
+	this.nftListClose.node.on('click', this.hideNftList, this);
     },
 
     onLoadContracts(state, address) {
@@ -122,7 +136,7 @@ cc.Class({
 	cc.nftStaking.methods
 	    .balances(cc.sessionId, cc.walletAddress, params.index).call()	
 	    .then((balance) => {		
-		cc.balances[slotId] = balance;
+		this.balances[slotId] = balance;
 
 		// 1. update slot status to nft id
 		this["slot"+slotId].string = `slot ${slotId}: nft #${balance.nftId}`; 
@@ -144,7 +158,7 @@ cc.Class({
 		
 		// 4. fetch next slot if it asked
 		if (params.fetchNext) {
-		    fetchSlot({fetchNext: true, index: params.index + 1});
+		    this.fetchSlot({fetchNext: true, index: params.index + 1});
 		}
 	    });
     },
@@ -171,6 +185,9 @@ cc.Class({
 
 	let rewardUnit    = parseInt(session.rewardUnit);
 	let portion = balanceAmount / sessionAmount;
+	if (isNaN(portion)) {
+	    return 0;
+	}
 	let interest = rewardUnit * portion;
 
 	let claimedTime   = parseInt(balance.claimedTime);
@@ -184,6 +201,8 @@ cc.Class({
 
     
     onInitGame() {
+	this.totalClaimable = 0;	
+	
 	// latest game session id
 	this.setSessionId()
 	    .then((sessionId) => {
@@ -195,12 +214,12 @@ cc.Class({
 			this.setSessionEnd(session);
 			
 			// player could have up to 3 parallel stats the game,
-			cc.nftRush.methods.slots(cc.sessionId, cc.walletAddress).call()			
+			cc.nftStaking.methods.slots(cc.sessionId, cc.walletAddress).call()			
 			    .then((slots) => {				
 				cc.log("Number of used slots: "+slots);				
 				this.usedSlots = parseInt(slots);
 
-				this.fetchSlot({index: this.usedSlots - 1, fetchNext: true});
+				this.fetchSlot({index: 0, fetchNext: true});
 				
 			    })			
 		    })		
@@ -209,13 +228,13 @@ cc.Class({
 
     onUpdate() {	
 	// player could have up to 3 parallel stats the game,	
-	cc.nftRush.methods.slots(cc.sessionId, cc.walletAddress).call()	
+	cc.nftStaking.methods.slots(cc.sessionId, cc.walletAddress).call()	
 	    .then((slots) => {
 		cc.log("Number of used slots: "+slots);
 		
 		this.usedSlots = parseInt(slots);
 		
-		this.fetchSlot({index: this.usedSlots - 1, fetchNext: true});
+		this.fetchSlot({index: 0, fetchNext: true});
 	    })
     },
 
@@ -238,45 +257,87 @@ cc.Class({
 
 
     onAdd1() {
-	if (this.balances[1] != undefined) {
+	if (this.balances[1] != undefined && this.balances[1].nftId > 0) {
 	    cc.error("Slot 1 is already fit with NFT");
 	    this.progressLabel.string = "Slot 1 is used by Nft";
 	    return;
 	}
 
-	this.add(this.balances[1].nftId, 1);
+	this.showNftList();
+	this.populateNftList(1); // pick 1 nft from list, then call adding nft to slot
     },
 
     onAdd2() {	
-	if (this.balances[2] != undefined) {
+	if (this.balances[2] != undefined && this.balances[2].nftId > 0) {
 	    cc.error("Slot 2 is already fit with NFT");
 	    this.progressLabel.string = "Slot 2 is used by Nft";
 	    return;
 	}
 
-	this.add(this.balances[2].nftId, 2);
+	this.showNftList();
+	this.populateNftList(2); // pick 1 nft from list, then call adding nft to slot
+	
+	//this.add(this.balances[0].nftId, 2);
     },
 
 
     onAdd3() {	
-	if (this.balances[3] != undefined) {
+	if (this.balances[3] != undefined && this.balances[3].nftId > 0) {
 	    cc.error("Slot 3 is already fit with NFT");
 	    this.progressLabel.string = "Slot 3 is used by Nft";
 	    return;
 	}
 
-	this.add(this.balances[3].nftId, 3);
+	this.showNftList();
+	this.populateNftList(3); // pick 1 nft from list, then call adding nft to slot
+    },
+
+
+    approve(nftId, slotId) {
+	// first, checking whether game's smartcontract was approved to manipulate
+	// player's nft
+	cc.nft.methods	
+	    .isApprovedForAll(cc.walletAddress, cc.nftStakingAddress)	
+	    .call()
+	    .then((approved) => {
+		if (approved) {
+		    this.add(nftId, slotId);
+		} else {
+		    // if not approved, we approve player
+
+		    // approve to manipulate with player's token in smartcontract:
+		    cc.nft.methods
+			.setApprovalForAll(cc.nftStakingAddress, true)
+			.send({from: cc.walletAddress})
+		    .on('transactionHash', (hash) => {			
+			this.progressLabel.string = "Please wait approvement confirmation...";			
+		    })		
+		    .on('receipt', (receipt) => {			
+			this.progressLabel.string = "Nft manipulation by game was approved";
+
+			this.add(nftId, slotId);
+		    })		
+		    .on('error', function(err){
+			this.progressLabel.string = err.toString();
+			console.error(err);	
+		    }.bind(this));					
+		}
+	    })
+	    .catch(e => {
+		console.error(e);		
+	    });
     },
     
     add(nftId, slotId) {
+	
 	// first getting the signature of the nft
-	let spPointUrl = cc.backendUrl + this.spPointPath + this.balances[0].nftId;
+	let spPointUrl = cc.backendUrl + this.spPointPath + nftId;
 	fetch(spPointUrl)
 	    .then((response) => {// convert stream to json
 		return response.json();		
 	    })	
 	    .then((data)=> {    // then, work with it:
-		if (data.scape_points != undefined || data.scape_points.length == 0) {
+		if (!data.scape_points || data.signature.length == 0) {
 		    this.progressLabel.string = "No scape points were set for nft";
 		    cc.error(data);
 		    return;
@@ -295,9 +356,13 @@ cc.Class({
 		    .on('receipt', (receipt) => {			
 			this.progressLabel.string = "Nft was added to slot!";
 
-			this.usedSlots++;			
+			this.usedSlots++;
+
+			cc.session = session;
+			cc.session.totalSp = parseInt(cc.session.totalSp)
+			    + parseInt(data.scape_points);
 		
-			this.fetchSlot({index: slotId, fetchNext: false});
+			this.fetchSlot({index: slotId -1, fetchNext: false});
 		    })		
 		    .on('error', function(err){
 			this.progressLabel.string = err.toString();
@@ -350,7 +415,7 @@ cc.Class({
     },
 
     onClaimAll() {
-	if(this.usedSlot == undefined || this.usedSlot <= 0) {
+	if(this.usedSlots == undefined || this.usedSlots <= 0) {
 	    cc.error("All slots are empty...");
 	    this.progressLabel.string = "All slots are empty...";
 	    return;
@@ -423,5 +488,63 @@ cc.Class({
     },
 
 
-    
+    ///------------------------------------------------------------
+    /// Nft list related functions
+    ///------------------------------------------------------------    
+
+    hideNftList () {
+	this.nftListLayout.active = false;
+	this.nftListContent.removeAllChildren();
+	
+    },
+
+    showNftList () {	
+	this.nftListLayout.active = true;
+    },
+
+    populateNftList (slotId) {
+	cc.nft.methods
+	    .balanceOf(cc.walletAddress)
+	    .call()
+	    .then(balance => {
+		balance = parseInt(balance);
+		if (balance === 0) {
+		    console.warn("No Nft was found, please mint some");
+		    return;
+		}
+	
+		for (var i = 0; i<balance; i++) {
+		    cc.nft.methods
+			.tokenByIndex(i)
+			.call({from: cc.walletAddress})
+			.then(nftId => {
+			    nftId = parseInt(nftId);
+
+			    // todo --->>
+			    //
+			    //   here you probably want to fetch it's data
+			    //   from server as well. for example, sprite id
+			    //
+			    // todoend.
+
+			    // meanwhile showing simple id
+			    var node = cc.instantiate(this.nftItemPrefab);
+			    node.getComponentInChildren(cc.Label).string
+				= "Seascape Nft "+nftId;
+			    node.parent = this.nftListContent;  
+			    
+			    node.on('click', function() {
+				this.hideNftList();
+				this.approve(nftId, slotId);				    
+			    }, this);
+			})
+			.catch(e => {
+			    console.error("Failed to fetch a token at index "+i);
+			    console.error(e);
+			    return;
+			});
+	}
+	    })
+	    .catch(e => console.error);
+    }
 });
