@@ -36,6 +36,8 @@ cc.Class({
 	totalEarned: cc.Label,
 	yourPower: cc.Label,
 
+	bonus: cc.Label,
+
 	///------------------------------------------------------------
 	/// Nft list
 	///------------------------------------------------------------
@@ -219,11 +221,17 @@ cc.Class({
 				cc.log("Number of used slots: "+slots);				
 				this.usedSlots = parseInt(slots);
 
-				this.fetchSlot({index: 0, fetchNext: true});
-				
-			    })			
+				this.fetchSlot({index: 0, fetchNext: true});			
+			    });
 		    })		
-	    });	
+	    });
+
+	this.fetchBonus().then(json => {
+	    this.bonusAmount = json.bonus;
+	    this.bonusSignature = json.signature;
+
+	    this.bonus.string = this.bonusAmount.toString() + "%";
+	})
     },
 
     onUpdate() {	
@@ -348,7 +356,7 @@ cc.Class({
 		let dots = this.signatureDots(data.signature);		
 
 		cc.nftStaking.methods
-		    .deposit(cc.sessionId, nftId, data.scape_points, dots.v, dots.r, dots.s)		
+		    .deposit(cc.sessionId, slotId - 1, nftId, data.scape_points, dots.v, dots.r, dots.s)		
 		    .send()		
 		    .on('transactionHash', (hash) => {			
 			this.progressLabel.string = "Please wait tx confirmation...";			
@@ -414,6 +422,27 @@ cc.Class({
 	    }.bind(this));	
     },
 
+    afterClaimAll() {
+	this.progressLabel.string = "Everything was claimed!";	
+
+	this.usedSlots = 0;	
+		
+	this.balances[1] = undefined;
+	this.balances[2] = undefined;	
+	this.balances[3] = undefined;	
+		
+	this.slot1.string = "slot 1: [empty]";	
+	this.claimAmount1.string = "slot 1: 0 CWS";	
+
+	this.slot2.string = "slot 2: [empty]";	
+	this.claimAmount2.string = "slot 2: 0 CWS";	
+		
+	this.slot3.string = "slot 3: [empty]";	
+	this.claimAmount3.string = "slot 3: 0 CWS";	
+
+	this.claimAmountAll.string = "all unclaimed: 0 CWS";	
+    },
+
     onClaimAll() {
 	if(this.usedSlots == undefined || this.usedSlots <= 0) {
 	    cc.error("All slots are empty...");
@@ -421,36 +450,37 @@ cc.Class({
 	    return;
 	}
 
-	cc.nftStaking.methods	
-	    .claimAll(cc.sessionId)	
-	    .send()	
-	    .on('transactionHash', (hash) => {		
-		this.progressLabel.string = "Please wait tx confirmation...";		
-	    })	
-	    .on('receipt', (receipt) => {		
-		this.progressLabel.string = "Everything was claimed!";		
-
-		this.usedSlots = 0;
-		
-		this.balances[1] = undefined;		
-		this.balances[2] = undefined;
-		this.balances[3] = undefined;
-		
-		this.slot1.string = "slot 1: [empty]";
-		this.claimAmount1.string = "slot 1: 0 CWS";
-
-		this.slot2.string = "slot 2: [empty]";		
-		this.claimAmount2.string = "slot 2: 0 CWS";
-		
-		this.slot3.string = "slot 3: [empty]";		
-		this.claimAmount3.string = "slot 3: 0 CWS";
-
-		this.claimAmountAll.string = "all unclaimed: 0 CWS";
-	    })	
-	    .on('error', function(err){		
-		this.progressLabel.string = err.toString();		
-		cc.error(err);		
-	    }.bind(this));	
+	if(this.bonusAmount != undefined && this.bonusAmount > 0) {
+	    let dots = this.signatureDots(this.bonusSignature);
+	    
+	    cc.nftStaking.methods	    
+		.claimAll(cc.sessionId, this.bonusAmount, dots.v, dots.r, dots.s)	    
+		.send()	    
+		.on('transactionHash', (hash) => {		    
+		    this.progressLabel.string = "Please wait tx confirmation...";		    
+		})	    
+		.on('receipt', (receipt) => {		    
+		    this.afterClaimAll();		    
+		})	    
+		.on('error', function(err){		    
+		    this.progressLabel.string = err.toString();		    
+		    cc.error(err);		    
+		}.bind(this));	    
+	} else {
+	    cc.nftStaking.methods	    
+		.claimAll(cc.sessionId)	    
+		.send()	    
+		.on('transactionHash', (hash) => {		    
+		    this.progressLabel.string = "Please wait tx confirmation...";		    
+		})	    
+		.on('receipt', (receipt) => {		    
+		    this.afterClaimAll();		    
+		})	    
+		.on('error', function(err){		    
+		    this.progressLabel.string = err.toString();		    
+		    cc.error(err);		    
+		}.bind(this));	    
+	}
     },
 
     ////////////////////////////////////////////////////    
@@ -466,27 +496,29 @@ cc.Class({
 	return {r: r, s: s, v: v};
     },
 
-    fetchTokenQuality() {	
-	fetch(this.getQualityUrl())
+    fetchBonus() {	
+	return new Promise((resolve, reject) => {
+	    fetch(this.getBonusUrl())
 	    .then((response) => {
 		response.json()
 		    .then((json) => {
-			if (json.quality != undefined) {
-			    this.quality = parseInt(json.quality);
-			    this.qualitySignature = json.signature;
-			    cc.log("Quality was set to "+this.quality);
-			    this.qualityLabel.string = this.quality;
-			    cc.log("Quality signature: "+json.signature);
+			if (json.bonus != undefined) {
+			    resolve(json);
+			} else {
+			    reject(json);
 			}
-		    });
+		    })
+		    .catch(reject);
 	    })
-	    .catch(console.error)
+		.catch(reject)
+	});
     },
+    
 
-    getQualityUrl () {
-	return (cc.backendUrl + "nftrush/quality/" + cc.walletAddress);
+    getBonusUrl() {
+	return (cc.backendUrl + "nftstaking/bonus/" + cc.walletAddress);
     },
-
+    
 
     ///------------------------------------------------------------
     /// Nft list related functions
@@ -515,8 +547,8 @@ cc.Class({
 	
 		for (var i = 0; i<balance; i++) {
 		    cc.nft.methods
-			.tokenByIndex(i)
-			.call({from: cc.walletAddress})
+			.tokenOfOwnerByIndex(cc.walletAddress, i)
+			.call()
 			.then(nftId => {
 			    nftId = parseInt(nftId);
 
