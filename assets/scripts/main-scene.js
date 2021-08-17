@@ -12,7 +12,15 @@ cc.Class({
 
 		initBlock: cc.Node,
 		walletBlock: cc.Node,
-		walletAddress: cc.Label
+		walletAddress: cc.Label,
+
+		ethToggle: cc.Toggle,
+		bscToggle: cc.Toggle,
+
+		ethNetId: 1,
+		ethName: "Ethereum",
+		bscNetId: 56,
+		bscName: "bsc"
     },
 
     onLoad () {
@@ -24,13 +32,50 @@ cc.Class({
 		cc.walletConnect = new ethereumWalletConnect();
 		cc.ethereumContract = ethereumContract;
 
-		this.initBlock.active = true;
-		this.walletBlock.active = false;
+		this.setActivity(false);
     },
 
+	setActivity(active) {
+		if (active) {
+			this.initBlock.active = false;
+			this.walletBlock.active = true;
+		} else {
+			this.initBlock.active = true;
+			this.walletBlock.active = false;
+		}
+	},
+
+	getNetworkName() {
+		if (this.ethToggle.isChecked) {
+			return this.ethName;
+		} else if (this.bscToggle.isChecked) {
+			return this.bscName;
+		} else {
+			return "localhost";
+		}
+	},
+
+	getNetworkId () {
+		if (this.ethToggle.isChecked) {
+			return this.ethNetId;
+		} else if (this.bscToggle.isChecked) {
+			return this.bscNetId;
+		} else {
+			return 8545;
+		}
+	},
+
     onUnlockWallet(event) {
+		var ok = confirm(`Are you sure to select to ${this.getNetworkName()} network?`);
+		if (!ok) {
+			return;
+		}
+
 		let onError = function(err){
 			cc.error(err.toString());
+			alert(err.toString());
+
+			this.setActivity(false);
 		}.bind(this);
 
 		let onSuccess = function(state, address){
@@ -38,8 +83,7 @@ cc.Class({
 				cc.walletAddress = address;
 				cc.log("Connected as: "+address);
 
-				this.initBlock.active = false;
-				this.walletBlock.active = true;
+				this.setActivity(true);
 				this.walletAddress.string = cc.walletAddress;
 			} else {
 				cc.warn("Not expected state from metamask: "+state);
@@ -47,7 +91,7 @@ cc.Class({
 		}.bind(this);
 
 		let expectedAccount = "";
-		let network = {id: cc.networkId, name: cc.networkName};
+		let network = {id: this.getNetworkId(), name: this.getNetworkName()};
 		cc.walletConnect.connectToMetaMask(expectedAccount, network, onSuccess, onError);
     },
 
