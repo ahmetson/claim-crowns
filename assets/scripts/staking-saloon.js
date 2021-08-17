@@ -47,8 +47,6 @@ cc.Class({
 
 			this.loadContract()
 			.then(() => {
-				cc.walletAddress = "0x327DFb7CCc67c22dEE023b98Fe2A9e07144BF281";
-
 				this.initSeason();
 			})
 			.catch((err) => {
