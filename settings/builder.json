@@ -20,7 +20,7 @@
     "orientation": "portrait"
   },
   "startScene": "5be8bbfe-939a-4cd7-a119-83bcada7f3fd",
-  "title": "15",
+  "title": "SeascapeGame",
   "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "",
@@ -33,10 +33,34 @@
   "zipCompressJs": true,
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
-    "pathPattern": "",
-    "scheme": "https",
     "host": "",
-    "skipRecord": false,
-    "recordPath": ""
-  }
+    "packageName": "org.cocos2d.demo",
+    "pathPattern": "",
+    "recordPath": "",
+    "scheme": "https",
+    "skipRecord": false
+  },
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "nativeMd5Cache": true,
+  "android": {
+    "REMOTE_SERVER_ROOT": "",
+    "packageName": "org.cocos2d.demo"
+  },
+  "ios": {
+    "REMOTE_SERVER_ROOT": "",
+    "packageName": "org.cocos2d.demo"
+  },
+  "mac": {
+    "REMOTE_SERVER_ROOT": "",
+    "height": 720,
+    "packageName": "org.cocos2d.demo",
+    "width": 1280
+  },
+  "win32": {
+    "REMOTE_SERVER_ROOT": "",
+    "height": 720,
+    "width": 1280
+  },
+  "appBundle": false
 }
