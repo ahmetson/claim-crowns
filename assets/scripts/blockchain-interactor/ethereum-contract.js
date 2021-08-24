@@ -11,11 +11,16 @@ let contract = {
                     reject(err.toString());
                 }
                 else {
+                    let abi = data.json.abi;
+                    if (!abi) {
+                        abi = data.json;
+                    }
+
                     var contractWeb3 = new web3.eth.Contract(
-                        data.json.abi,
+                        abi,
                         address,
                         {
-                                from: deployer
+                            from: deployer
                         }
                     );
 

@@ -87,7 +87,7 @@ cc.Class({
         }
 
         this.callback = callback;
-	this.errCallback = errCallback;
+	    this.errCallback = errCallback;
 	
         // update the flag of the valid network
         this.expectedNetwork = expectedNetwork;
