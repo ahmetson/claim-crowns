@@ -138,7 +138,7 @@ cc.Class({
 
 			let contract = this.getContract();
 
-			contract.methods.withdraw(this.sessionId, depositAmount).send()
+			contract.methods.withdraw(this.sessionId, this.balance.amount).send()
 			.on('receipt', () => {
 				this.withdraw.string = "0";
 			})
