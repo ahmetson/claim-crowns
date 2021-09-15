@@ -183,7 +183,7 @@
       "array": [
         0,
         0,
-        317.20053685286825,
+        317.03880550722545,
         0,
         0,
         0,
@@ -1071,7 +1071,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 940,
-      "height": 200
+      "height": 400
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1253,7 +1253,7 @@
         "__id__": 54
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 61
@@ -2629,6 +2629,7 @@
       "__id__": 33
     },
     "contractAbi": "ProfitCircusOld",
+    "movrContractAbi": "MovrProfitCircus",
     "claimNftButton": {
       "__id__": 52
     },
@@ -2640,8 +2641,10 @@
     },
     "ethContractAddress": "0xbcf39f0edda668c58371e519af37ca705f2bfcbd",
     "bscContractAddress": "0x82b6ed562f202E76A5bDBB209e077f4a96bD5605",
-    "ethSessionId": 4,
-    "bscSessionId": 4,
+    "movrContractAddress": "0x805C8922b408234f5208779053D06D7E8A8d74BC",
+    "ethSessionId": 0,
+    "bscSessionId": 0,
+    "movrSessionId": 3,
     "_id": "c6Yue5Mw5HXKIAQ+7tdTj7"
   },
   {
@@ -2720,7 +2723,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -100,
+        -300,
         0,
         0,
         0,
@@ -4061,6 +4064,7 @@
       "__id__": 70
     },
     "contractAbi": "ProfitCircusOld",
+    "movrContractAbi": "MovrProfitCircus",
     "claimNftButton": {
       "__id__": 89
     },
@@ -4072,8 +4076,10 @@
     },
     "ethContractAddress": "0xa35abb86c53695bb1b23b55808b6c5871432c22c",
     "bscContractAddress": "0xCE188BF49Ee072847c95414518EB56C5eB6F0e3B",
+    "movrContractAddress": "0x29b0d9A9A989e4651488D0002ebf79199cE1b7C1",
     "ethSessionId": 2,
     "bscSessionId": 4,
+    "movrSessionId": 0,
     "_id": "54VtrMyU1N+YM5zHOF2rpD"
   },
   {
@@ -4098,7 +4104,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 940,
-      "height": 200
+      "height": 400
     },
     "_resize": 1,
     "_N$layoutType": 2,

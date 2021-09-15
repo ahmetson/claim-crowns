@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "profit-circus-season",
+    "_name": "profit-circus-season 1",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -320,8 +320,8 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "2",
-    "_N$string": "2",
+    "_string": "1",
+    "_N$string": "1",
     "_fontSize": 35,
     "_lineHeight": 50,
     "_enableWrapText": true,
@@ -1415,6 +1415,7 @@
       "__id__": 7
     },
     "contractAbi": "ProfitCircusOld",
+    "movrContractAbi": "MovrProfitCircus",
     "claimNftButton": {
       "__id__": 26
     },
@@ -1424,10 +1425,12 @@
     "withdrawButton": {
       "__id__": 33
     },
-    "ethContractAddress": "0xa35abb86c53695bb1b23b55808b6c5871432c22c",
-    "bscContractAddress": "0xCE188BF49Ee072847c95414518EB56C5eB6F0e3B",
-    "ethSessionId": 2,
-    "bscSessionId": 4,
+    "ethContractAddress": "0xbcf39f0edda668c58371e519af37ca705f2bfcbd",
+    "bscContractAddress": "0x82b6ed562f202E76A5bDBB209e077f4a96bD5605",
+    "movrContractAddress": "0x805C8922b408234f5208779053D06D7E8A8d74BC",
+    "ethSessionId": 0,
+    "bscSessionId": 0,
+    "movrSessionId": 3,
     "_id": ""
   },
   {

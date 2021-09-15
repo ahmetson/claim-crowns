@@ -7,6 +7,7 @@ cc.Class({
     properties: {
 		seasonId: cc.Label,
 		contractAbi: "Staking",
+		movrContractAbi: "Staking",
 
 		claimNftButton: cc.Button,
 		
@@ -15,9 +16,11 @@ cc.Class({
 
 		ethContractAddress: "0x29b0d9A9A989e4651488D0002ebf79199cE1b7C1",
 		bscContractAddress: "0x29b0d9A9A989e4651488D0002ebf79199cE1b7C1",
+		movrContractAddress: "0x29b0d9A9A989e4651488D0002ebf79199cE1b7C1",
 
 		ethSessionId: 1,
 		bscSessionId: 56,
+		movrSessionId: 3
     },
 
 	getContract() {
@@ -32,7 +35,7 @@ cc.Class({
 		cc.ethereumContract = ethereumContract;
 
 		web3.eth.net.getId()
-		.then((netId) => {
+		.then(function(netId) {
 			this.netId = netId;
 			if (netId == 1) {
 				this.sessionId = this.ethSessionId;
@@ -40,6 +43,14 @@ cc.Class({
 			} else if (netId == 56) {
 				this.sessionId = this.bscSessionId;
 				this.contractAddress = this.bscContractAddress;
+			} else if (netId == 1285) {
+				this.sessionId = this.movrSessionId;
+				this.contractAddress = this.movrContractAddress;
+				this.contractAbi = this.movrContractAbi;
+			}
+
+			if (!this.sessionId) {
+				return;
 			}
 
 			this.loadContract()
@@ -50,7 +61,7 @@ cc.Class({
 				alert("Failed to init the season "+this.seasonId.string);
 				console.error(err);
 			});
-		})
+		}.bind(this))
 		.catch((err) => {
 			console.log(err);
 		})
@@ -129,6 +140,11 @@ cc.Class({
     ////////////////////////////////////////////////////    
 
 	onWithdrawAll() {
+		if (!this.sessionId) {
+			alert('Unsupported Season in this Blockchain!');
+			return;
+		}
+
 		return new Promise((resolve, reject) => {
 			let depositAmount = web3.utils.toWei(this.balance.amount, 'ether');
 			if (depositAmount == 0) {
@@ -149,6 +165,11 @@ cc.Class({
 	},
 
 	onClaimNft() {
+		if (!this.sessionId) {
+			alert('Unsupported Season in this Blockchain!');
+			return;
+		}
+
 		let contract = this.getContract();
 
 		if (!this.balance.minted) {

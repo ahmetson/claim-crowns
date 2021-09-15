@@ -16,11 +16,14 @@ cc.Class({
 
 		ethToggle: cc.Toggle,
 		bscToggle: cc.Toggle,
+		movrToggle: cc.Toggle,
 
 		ethNetId: 1,
 		ethName: "Ethereum",
 		bscNetId: 56,
-		bscName: "bsc"
+		bscName: "bsc",
+		movrNetId: 1285,
+		movrName: "moonrivr"
     },
 
     onLoad () {
@@ -50,6 +53,8 @@ cc.Class({
 			return this.ethName;
 		} else if (this.bscToggle.isChecked) {
 			return this.bscName;
+		} else if (this.movrToggle.isChecked) {
+			return this.movrName;
 		} else {
 			return "localhost";
 		}
@@ -60,6 +65,8 @@ cc.Class({
 			return this.ethNetId;
 		} else if (this.bscToggle.isChecked) {
 			return this.bscNetId;
+		} else if (this.movrToggle.isChecked) {
+			return this.movrNetId;
 		} else {
 			return 8545;
 		}
