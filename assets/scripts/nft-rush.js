@@ -361,7 +361,7 @@ cc.Class({
 		    this.claimDailySpent();
 		} else {
 		    alert("No claimable reward found");
-		}
+		} 
 	    });
     },
 

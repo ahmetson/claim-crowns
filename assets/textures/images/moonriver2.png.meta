@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.5",
+  "uuid": "53bf5cf3-7684-4b69-beee-5e9b82636a73",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 356,
+  "height": 263,
+  "platformSettings": {},
+  "subMetas": {
+    "moonriver2": {
+      "ver": "1.0.4",
+      "uuid": "316072f2-b994-482a-957f-65406d3143c2",
+      "rawTextureUuid": "53bf5cf3-7684-4b69-beee-5e9b82636a73",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 356,
+      "height": 263,
+      "rawWidth": 356,
+      "rawHeight": 263,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
