@@ -1,0 +1,18 @@
+info face="FS-export" size=32 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=1,1
+common lineHeight=492 base=26 scaleW=1024 scaleH=256 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="FS-export.png"
+chars count=14
+char id=49 x=823 y=0 width=68 height=180 xoffset=0 yoffset=318 xadvance=86 page=0 chnl=0 letter="1"
+char id=50 x=0 y=0 width=107 height=172 xoffset=0 yoffset=320 xadvance=125 page=0 chnl=0 letter="2"
+char id=51 x=562 y=0 width=87 height=175 xoffset=0 yoffset=320 xadvance=105 page=0 chnl=0 letter="3"
+char id=52 x=108 y=0 width=92 height=179 xoffset=0 yoffset=312 xadvance=110 page=0 chnl=0 letter="4"
+char id=53 x=737 y=0 width=85 height=174 xoffset=0 yoffset=321 xadvance=103 page=0 chnl=0 letter="5"
+char id=54 x=474 y=0 width=87 height=172 xoffset=0 yoffset=321 xadvance=105 page=0 chnl=0 letter="6"
+char id=55 x=292 y=0 width=90 height=172 xoffset=0 yoffset=321 xadvance=108 page=0 chnl=0 letter="7"
+char id=56 x=383 y=0 width=90 height=173 xoffset=0 yoffset=319 xadvance=108 page=0 chnl=0 letter="8"
+char id=57 x=650 y=0 width=86 height=171 xoffset=0 yoffset=321 xadvance=104 page=0 chnl=0 letter="9"
+char id=48 x=201 y=0 width=90 height=170 xoffset=-10 yoffset=322 xadvance=108 page=0 chnl=0 letter="0"
+char id=32 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance=121 page=0 chnl=0 letter=" "
+char id=9 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance=968 page=0 chnl=0 letter="	"
+
+kernings count=0
